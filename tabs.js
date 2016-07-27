@@ -9,12 +9,12 @@ function clickHandler(){
 
 //loop through the tabs and group them by windows for display
 chrome.tabs.query({}, function(tabs){
+  var windowDisplayNum = 1;
   for(var i = 0, len = tabs.length; i < len; i++){
     var li = document.createElement("li");
     var link = document.createElement("a");
 
     var isNewWindow = !(currentWindow === tabs[i].windowId);
-    console.log("is new window: " + currentWindow + " " + tabs[i].windowId);
     if(isNewWindow){
       //insert a new window header and change the ul
       currentWindow = tabs[i].windowId;
@@ -22,7 +22,7 @@ chrome.tabs.query({}, function(tabs){
       ul = document.createElement("ul")
 
       var windowTitle = document.createElement("h2");
-      windowTitle.innerText = "Window " + currentWindow;
+      windowTitle.innerText = "Window " + windowDisplayNum++;
 
       body.appendChild(windowTitle);
       body.appendChild(ul)
