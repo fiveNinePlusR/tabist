@@ -9,6 +9,7 @@ function clickHandler(){
 
 //loop through the tabs and group them by windows for display
 chrome.tabs.query({}, function(tabs){
+  //display a nice sequential number on the tab.
   var windowDisplayNum = 1;
   for(var i = 0, len = tabs.length; i < len; i++){
     var li = document.createElement("li");
@@ -33,7 +34,10 @@ chrome.tabs.query({}, function(tabs){
     link.tabId = tabs[i].id;
     link.windowId = tabs[i].windowId;
 
-    link.innerText = tabs[i].title || tabs[i].url;
+    var text = tabs[i].title || tabs[i].url;
+    var audibleText = tabs[i].audible ? "(Audible) " : "";
+    link.innerText = audibleText + text;
+
 
     li.appendChild(link)
     ul.appendChild(li);
