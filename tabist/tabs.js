@@ -2,6 +2,7 @@
 function clickHandler(){
   chrome.tabs.update(this.tabId, {active:true}); 
   chrome.windows.update(this.windowId, {focused: true});
+  return false;
 }
 
 function updateTabList(){
