@@ -49,8 +49,16 @@ function updateTabList(){
       li.appendChild(link)
       ul.appendChild(li);
     }
+
+    var tabCountDiv = document.createElement("div");
+    var statisticsText = "<h2>Total Windows: " + --windowDisplayNum + "</h2>";
+    statisticsText += "<h2>Total Tabs: " + tabs.length + "</h2>";
+    statisticsText += "<h2>Average Tabs Per Window: " + (tabs.length/windowDisplayNum).toFixed(2) + "</h2>";
+    tabCountDiv.innerHTML = statisticsText;
+
+    maindiv.appendChild(tabCountDiv)
   }); 
-};
+  };
 
 
 
