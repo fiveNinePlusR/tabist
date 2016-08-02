@@ -5,9 +5,24 @@ function clickHandler(){
   return false;
 }
 
+function makeLink(tab){
+      var link = document.createElement("a");
+      link.href = "#"; 
+      link.onclick = clickHandler;
+      link.tabId = tab.id;
+      link.windowId = tab.windowId;
+
+      var text = tab.title || tab.url;
+      var audibleText = tab.audible ? "(Audible) " : "";
+      link.innerText = audibleText + text;
+
+      return link;
+}
+
 function updateTabList(){
   var body = document.getElementById("body");
   document.getElementById("content").remove();
+  //HACK - should update the list as things happen
   var maindiv = document.createElement("div");
   maindiv.id = "content";
   body.appendChild(maindiv);
@@ -20,7 +35,6 @@ function updateTabList(){
     var windowDisplayNum = 1;
     for(var i = 0, len = tabs.length; i < len; i++){
       var li = document.createElement("li");
-      var link = document.createElement("a");
 
       var isNewWindow = !(currentWindow === tabs[i].windowId);
       if(isNewWindow){
@@ -34,19 +48,11 @@ function updateTabList(){
 
         maindiv.appendChild(windowTitle);
         maindiv.appendChild(ul)
-      }
-
-      link.href = "#"; 
-      link.onclick = clickHandler;
-      link.tabId = tabs[i].id;
-      link.windowId = tabs[i].windowId;
-
-      var text = tabs[i].title || tabs[i].url;
-      var audibleText = tabs[i].audible ? "(Audible) " : "";
-      link.innerText = audibleText + text;
+      } 
 
 
-      li.appendChild(link)
+      var link = makeLink(tabs[i]);
+      li.appendChild(link);
       ul.appendChild(li);
     }
 
@@ -58,12 +64,12 @@ function updateTabList(){
 
     maindiv.appendChild(tabCountDiv)
   }); 
-  };
+};
 
 
 
 
 updateTabList();
 setInterval(updateTabList, 3000);
-  // where to go to possibly fix the tab title bug when there are tabs that have been unloaded
-  // http://searchfox.org/mozilla-central/source/browser/components/extensions/ext-utils.js#386
+// where to go to possibly fix the tab title bug when there are tabs that have been unloaded
+// http://searchfox.org/mozilla-central/source/browser/components/extensions/ext-utils.js#386
