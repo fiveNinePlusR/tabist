@@ -6,17 +6,17 @@ function clickHandler(){
 }
 
 function makeLink(tab){
-      var link = document.createElement("a");
-      link.href = "#"; 
-      link.onclick = clickHandler;
-      link.tabId = tab.id;
-      link.windowId = tab.windowId;
+  var link = document.createElement("a");
+  link.href = "#"; 
+  link.onclick = clickHandler;
+  link.tabId = tab.id;
+  link.windowId = tab.windowId;
 
-      var text = tab.title || tab.url;
-      var audibleText = tab.audible ? "(Audible) " : "";
-      link.innerText = audibleText + text;
+  var text = tab.title || tab.url;
+  var audibleText = tab.audible ? "&#x1f508; " : "";
+  link.innerHTML = audibleText + text;
 
-      return link;
+  return link;
 }
 
 function updateTabList(){
