@@ -5,6 +5,12 @@ function clickHandler(){
   return false;
 }
 
+function setVersion(){
+  var version = document.getElementById("version");
+  var manifest = chrome.runtime.getManifest();
+  version.innerText = "Tabist (" + manifest.version + ")";
+}
+
 function makeLink(tab){
   var link = document.createElement("a");
   link.href = "#"; 
@@ -21,11 +27,8 @@ function makeLink(tab){
 
 function updateTabList(){
   var body = document.getElementById("body");
-  document.getElementById("content").remove();
-  //HACK - should update the list as things happen
-  var maindiv = document.createElement("div");
-  maindiv.id = "content";
-  body.appendChild(maindiv);
+  var maindiv = document.getElementById("content");
+  maindiv.innerHTML = "";
 
   var currentWindow = null;
   var ul = null;
@@ -73,3 +76,4 @@ updateTabList();
 setInterval(updateTabList, 3000);
 // where to go to possibly fix the tab title bug when there are tabs that have been unloaded
 // http://searchfox.org/mozilla-central/source/browser/components/extensions/ext-utils.js#386
+setVersion();
