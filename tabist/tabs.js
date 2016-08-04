@@ -69,11 +69,23 @@ function updateTabList(){
   }); 
 };
 
+chrome.tabs.onCreated.addListener(() => { updateTabList(); });
+chrome.tabs.onRemoved.addListener(() => { 
+  window.setTimeout(updateTabList, 2000); // FIXME: needed for firefox until this is resolved https://bugzilla.mozilla.org/show_bug.cgi?id=1291830 
+  updateTabList(); 
+});
 
+//moved inside a window
+chrome.tabs.onMoved.addListener( () => { updateTabList(); });
 
+//moved between windows
+chrome.tabs.onAttached.addListener( () => { updateTabList(); });
 
-updateTabList();
-setInterval(updateTabList, 3000);
-// where to go to possibly fix the tab title bug when there are tabs that have been unloaded
-// http://searchfox.org/mozilla-central/source/browser/components/extensions/ext-utils.js#386
+chrome.tabs.onUpdated.addListener( (tabId, changeInfo, tab) => {
+  if(changeInfo["status"] == "complete"){
+    updateTabList();
+  }
+});
+
 setVersion();
+updateTabList();
