@@ -102,9 +102,11 @@ chrome.tabs.onMoved.addListener( () => { updateTabList(); });
 chrome.tabs.onAttached.addListener( () => { updateTabList(); });
 
 chrome.tabs.onUpdated.addListener( (tabId, changeInfo, tab) => {
-  if(changeInfo["status"] == "complete"){
-    updateTabList();
-  }
+  chrome.tabs.get(tabId, tab => {
+    if(tab.status == "complete"){
+      updateTabList();
+    } 
+  });
 });
 
 setVersion();
