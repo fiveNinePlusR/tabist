@@ -32,6 +32,26 @@ function updateTabList(){
 
   var currentWindow = null;
   var ul = null;
+
+  //loop through the audible tabs
+  chrome.tabs.query({audible: true}, function(tabs){
+    if (tabs.length > 0){
+      var AudibleTitle = document.createElement("h2");
+      AudibleTitle.innerText = "Audible Tabs";
+      maindiv.appendChild(AudibleTitle);
+      ul = document.createElement("ul");
+      maindiv.appendChild(ul);
+
+      for(let tab of tabs){
+        var link = makeLink(tab);
+        var li = document.createElement("li");
+
+        li.appendChild(link);
+        ul.appendChild(li); 
+      }
+    }
+  });
+
   //loop through the tabs and group them by windows for display
   chrome.tabs.query({}, function(tabs){
     //display a nice sequential number on the tab.
