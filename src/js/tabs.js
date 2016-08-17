@@ -38,6 +38,7 @@ function setDevStatus() {
   });
 }
 
+// Returns a link object for a tab with click handlers set
 function makeLink(tab) {
   var link = document.createElement("a");
   link.href = "#";
@@ -53,6 +54,52 @@ function makeLink(tab) {
   return link;
 }
 
+// returns tabs grouped by window
+// input [tabs]
+// Map {window_id => [tab]+}
+function groupByWindow(tabs) {
+  return tabs.reduce(function(memo, cur) {
+    let win = memo.get(cur.windowId) || [];
+
+    win.push(cur);
+    memo.set(cur.windowId, win);
+
+    return memo;
+  }, new Map());
+}
+
+function lexSort(l,r) {
+  let left = new URL(l.url);
+  let right = new URL(r.url);
+  left = left.hostname || left.href;
+  right = right.hostname || right.href;
+
+  if(left > right) {
+    return 1;
+  }
+  if(left < right) {
+    return -1;
+  }
+  return 0;
+}
+
+// Sorts a Map of window_ids with an array of tabs as the values by the domain of the url.
+// input Map {window_ids => [tab]+}
+// returns Map {window_ids => [sorted_tabs]}
+function sortByDomain(windows) {
+  if(sortByDomainValue){
+    let sortedWindows = new Map();
+
+    for(let [windowId, tabs] of windows){
+      let sortedTabs = tabs.sort(lexSort);
+      sortedWindows.set(windowId, sortedTabs);
+    }
+    return sortedWindows;
+  }
+  return windows;
+}
+
+// Main update routine
 function updateTabList() {
   var start = Date.now();
   var maindiv = document.getElementById("content");
@@ -117,45 +164,6 @@ function updateTabList() {
     setVersion();
     setDevStatus();
   });
-}
-
-function groupByWindow(tabs) {
-  return tabs.reduce(function(memo, cur) {
-    let win = memo.get(cur.windowId) || [];
-
-    win.push(cur);
-    memo.set(cur.windowId, win);
-
-    return memo;
-  }, new Map());
-}
-
-function lexSort(l,r) {
-  let left = new URL(l.url);
-  let right = new URL(r.url);
-  left = left.hostname || left.href;
-  right = right.hostname || right.href;
-
-  if(left > right) {
-    return 1;
-  }
-  if(left < right) {
-    return -1;
-  }
-  return 0;
-}
-
-function sortByDomain(windows) {
-  if(sortByDomainValue){
-    let sortedWindows = new Map();
-
-    for(let [windowId, tabs] of windows){
-      let sortedTabs = tabs.sort(lexSort);
-      sortedWindows.set(windowId, sortedTabs);
-    }
-    return sortedWindows;
-  }
-  return windows;
 }
 
 // closeTab: Close tab after clicking on a tabist link to navigate to that tab
@@ -230,3 +238,54 @@ storageChangedBusThrottled.onValue( () => {
 // basic setup of the page
 updateGroupByPreferences();
 getOptions();
+
+// tab backup and restore
+document.getElementById("backup_tabs").onclick = function() {
+  chrome.tabs.query({}, function(tabs) {
+    download(JSON.stringify(tabs, null, " "));
+  });
+};
+
+document.getElementById("restore_tabs").onclick = function() {
+  let fileinput = document.getElementById("restore_tabs_file");
+  fileinput.addEventListener("change", function () {
+    let filelist = this.files;
+    var reader = new FileReader();
+
+    reader.onload = (function() { return function(e) {
+      let restoredata = e.target.result.replace(/^[^,]*,/g, "");
+      try{
+        let data = window.atob(restoredata);
+        let json = JSON.parse(data);
+        if (json) {
+          let wins = groupByWindow(json);
+          for (let [win, tabs] of wins) {
+            let links = getLinksFromTabs(tabs);
+            console.log(links);
+            chrome.windows.create({ url: links });
+          }
+        }
+      } catch(e){
+        console.log(e);
+      }
+    }; })();
+
+    reader.readAsDataURL(filelist[0]);
+  }, false);
+  fileinput.click();
+};
+
+// returns an array of tabs for a set of tabs 
+// input [tabs]
+// returns [urls]
+function getLinksFromTabs(tabs) {
+  return tabs.reduce((memo, cur) => { memo = memo || []; memo.push(cur.url); return memo; }, []);
+}
+
+function download(data) {
+  var blob = new Blob([data], {type: "text/json"});
+  var url = window.URL.createObjectURL(blob);
+  chrome.downloads.download({url:url, filename:"tabsbackup.json", conflictAction:"uniquify"}, function(downloadId) {
+    // console.log(downloadId);
+  });
+}
