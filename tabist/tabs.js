@@ -1,3 +1,4 @@
+const domainSortKey = "domainSort";
 
 function clickHandler(){
   chrome.tabs.update(this.tabId, {active: true}); 
@@ -119,7 +120,8 @@ function lexSort(l,r) {
 }
 
 function sortByDomain(windows){
-  if(localStorage.getItem("domainSort")){
+  let sortByDomain = localStorage.getItem(domainSortKey) === "true";
+  if(sortByDomain){
     let sortedWindows = new Map();
 
     for(let [windowId, tabs] of windows){
@@ -156,6 +158,22 @@ chrome.tabs.onUpdated.addListener( (tabId, changeInfo, tab) => {
 var throttledBus = bus.debounce(500);
 //subscribe to the debounced bus.
 throttledBus.onValue(function(val){ updateTabList(); });
+var groupbyNormalElement = document.getElementById("gb_as_ordered");
+var groupbyDomainElement = document.getElementById("gb_domain");
+
+var groupbyNormal = Bacon.fromEvent(groupbyNormalElement, "click");
+var groupbyDomain = Bacon.fromEvent(groupbyDomainElement, "click");
+var groupbyPressed = Bacon.mergeAll(groupbyNormal, groupbyDomain);
+
+groupbyPressed.onValue(function(target){
+  let gbdomain = target.currentTarget.id == "gb_domain";
+  localStorage.setItem(domainSortKey, gbdomain);
+  bus.push("groupby pressed");
+
+});
+var sortbyDomainBool = localStorage.getItem(domainSortKey) === "true";
+groupbyNormalElement.checked = !sortbyDomainBool;
+groupbyDomainElement.checked = sortbyDomainBool;
 
 setVersion();
 updateTabList();
