@@ -31,7 +31,6 @@ function updateTabList(){
   var maindiv = document.getElementById("content");
   maindiv.innerHTML = "";
 
-  var currentWindow = null;
   var ul = null;
 
   //loop through the audible tabs
@@ -96,25 +95,31 @@ function updateTabList(){
   }); 
 };
 
-chrome.tabs.onCreated.addListener(() => { updateTabList(); });
+var bus = new Bacon.Bus();
+
+chrome.tabs.onCreated.addListener(() => { bus.push("onCreated"); });
 chrome.tabs.onRemoved.addListener(() => { 
-  window.setTimeout(updateTabList, 2000); // FIXME: needed for firefox until this is resolved https://bugzilla.mozilla.org/show_bug.cgi?id=1291830 
-  updateTabList(); 
+  window.setTimeout(() => { bus.push("onRemoved Delayed"); }, 2000); // FIXME: needed for firefox until this is resolved https://bugzilla.mozilla.org/show_bug.cgi?id=1291830 
+  bus.push("onRemoved");
 });
 
 //moved inside a window
-chrome.tabs.onMoved.addListener( () => { updateTabList(); });
+chrome.tabs.onMoved.addListener( () => { bus.push("onMoved"); });
 
 //moved between windows
-chrome.tabs.onAttached.addListener( () => { updateTabList(); });
+chrome.tabs.onAttached.addListener( () => { bus.push("onAttached"); });
 
 chrome.tabs.onUpdated.addListener( (tabId, changeInfo, tab) => {
   chrome.tabs.get(tabId, tab => {
     if(tab.status == "complete"){
-      updateTabList();
+      bus.push("onUpdated");
     } 
   });
 });
+
+var throttledBus = bus.debounce(500);
+//subscribe to the debounced bus.
+throttledBus.onValue(function(val){ updateTabList(); });
 
 setVersion();
 updateTabList();
