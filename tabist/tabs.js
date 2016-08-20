@@ -26,6 +26,7 @@ function makeLink(tab){
 }
 
 function updateTabList(){
+  var start = Date.now();
   var body = document.getElementById("body");
   var maindiv = document.getElementById("content");
   maindiv.innerHTML = "";
@@ -85,7 +86,13 @@ function updateTabList(){
     statisticsText += "<h2>Average Tabs Per Window: " + (tabs.length/windowDisplayNum).toFixed(2) + "</h2>";
     tabCountDiv.innerHTML = statisticsText;
 
-    maindiv.appendChild(tabCountDiv)
+    maindiv.appendChild(tabCountDiv);
+    let end = Date.now();
+    let extime = end - start;
+    let execTimeDiv = document.createElement("div");
+    execTimeDiv.innerHTML = "<h4>Created In: " + extime + "ms</h4>";
+
+    maindiv.appendChild(execTimeDiv);
   }); 
 };
 
