@@ -53,36 +53,33 @@ function updateTabList(){
   });
 
   //loop through the tabs and group them by windows for display
-  chrome.tabs.query({}, function(tabs){
+  chrome.tabs.query({}, function(alltabs){
+    let windowTabs = sortByDomain(groupByWindow(alltabs));
     //display a nice sequential number on the tab.
-    var windowDisplayNum = 1;
-    for(var i = 0, len = tabs.length; i < len; i++){
-      var li = document.createElement("li");
-
-      var isNewWindow = !(currentWindow === tabs[i].windowId);
-      if(isNewWindow){
+    var windowDisplayNum = 0;
+    for(let [winId, tabs] of windowTabs) {
         //insert a new window header and change the ul
-        currentWindow = tabs[i].windowId;
+        ul = document.createElement("ul");
+        // console.log("windowId: " + winId);
 
-        ul = document.createElement("ul")
-
-        var windowTitle = document.createElement("h2");
-        windowTitle.innerText = "Window " + windowDisplayNum++;
+        let windowTitle = document.createElement("h2");
+        windowTitle.innerText = "Window " + ++windowDisplayNum;
 
         maindiv.appendChild(windowTitle);
-        maindiv.appendChild(ul)
-      } 
+        maindiv.appendChild(ul);
 
-
-      var link = makeLink(tabs[i]);
-      li.appendChild(link);
-      ul.appendChild(li);
+      for(let tab of tabs) {
+        let li = document.createElement("li");
+        let link = makeLink(tab);
+        li.appendChild(link);
+        ul.appendChild(li);
+      }
     }
 
     var tabCountDiv = document.createElement("div");
-    var statisticsText = "<h2>Total Windows: " + --windowDisplayNum + "</h2>";
-    statisticsText += "<h2>Total Tabs: " + tabs.length + "</h2>";
-    statisticsText += "<h2>Average Tabs Per Window: " + (tabs.length/windowDisplayNum).toFixed(2) + "</h2>";
+    var statisticsText = "<h2>Total Windows: " + windowDisplayNum + "</h2>";
+    statisticsText += "<h2>Total Tabs: " + alltabs.length + "</h2>";
+    statisticsText += "<h2>Average Tabs Per Window: " + (alltabs.length/windowDisplayNum).toFixed(2) + "</h2>";
     tabCountDiv.innerHTML = statisticsText;
 
     maindiv.appendChild(tabCountDiv);
@@ -94,6 +91,45 @@ function updateTabList(){
     maindiv.appendChild(execTimeDiv);
   }); 
 };
+
+function groupByWindow(tabs){
+  return tabs.reduce(function(memo, cur) {
+    let win = memo.get(cur.windowId) || [];
+
+    win.push(cur);
+    memo.set(cur.windowId, win);
+
+    return memo;
+  }, new Map());
+}
+
+function lexSort(l,r) {
+  let left = new URL(l.url);
+  let right = new URL(r.url);
+  left = left.hostname || left.href;
+  right = right.hostname || right.href;
+
+  if(left > right) {
+    return 1;
+  }
+  if(left < right) {
+    return -1;
+  }
+  return 0;
+}
+
+function sortByDomain(windows){
+  if(localStorage.getItem("domainSort")){
+    let sortedWindows = new Map();
+
+    for(let [windowId, tabs] of windows){
+      let sortedTabs = tabs.sort(lexSort);
+      sortedWindows.set(windowId, sortedTabs);
+    }
+    return sortedWindows;
+  }
+  return windows;
+}
 
 var bus = new Bacon.Bus();
 
