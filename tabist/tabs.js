@@ -1,7 +1,7 @@
 const domainSortKey = "domainSort";
 
 function clickHandler(){
-  chrome.tabs.update(this.tabId, {active: true}); 
+  chrome.tabs.update(this.tabId, {active: true});
   chrome.windows.update(this.windowId, {focused: true});
   return false;
 }
@@ -14,7 +14,7 @@ function setVersion(){
 
 function makeLink(tab){
   var link = document.createElement("a");
-  link.href = "#"; 
+  link.href = "#";
   link.onclick = clickHandler;
   link.tabId = tab.id;
   link.windowId = tab.windowId;
@@ -48,7 +48,7 @@ function updateTabList(){
         var li = document.createElement("li");
 
         li.appendChild(link);
-        ul.appendChild(li); 
+        ul.appendChild(li);
       }
     }
   });
@@ -61,7 +61,6 @@ function updateTabList(){
     for(let [winId, tabs] of windowTabs) {
         //insert a new window header and change the ul
         ul = document.createElement("ul");
-        // console.log("windowId: " + winId);
 
         let windowTitle = document.createElement("h2");
         windowTitle.innerText = "Window " + ++windowDisplayNum;
@@ -90,7 +89,7 @@ function updateTabList(){
     execTimeDiv.innerHTML = "<h4>Created In: " + extime + "ms</h4>";
 
     maindiv.appendChild(execTimeDiv);
-  }); 
+  });
 };
 
 function groupByWindow(tabs){
@@ -136,8 +135,8 @@ function sortByDomain(windows){
 var bus = new Bacon.Bus();
 
 chrome.tabs.onCreated.addListener(() => { bus.push("onCreated"); });
-chrome.tabs.onRemoved.addListener(() => { 
-  window.setTimeout(() => { bus.push("onRemoved Delayed"); }, 2000); // FIXME: needed for firefox until this is resolved https://bugzilla.mozilla.org/show_bug.cgi?id=1291830 
+chrome.tabs.onRemoved.addListener(() => {
+  window.setTimeout(() => { bus.push("onRemoved Delayed"); }, 2000); // FIXME: needed for firefox until this is resolved https://bugzilla.mozilla.org/show_bug.cgi?id=1291830
   bus.push("onRemoved");
 });
 
@@ -151,13 +150,13 @@ chrome.tabs.onUpdated.addListener( (tabId, changeInfo, tab) => {
   chrome.tabs.get(tabId, tab => {
     if(tab.status == "complete"){
       bus.push("onUpdated");
-    } 
+    }
   });
 });
 
 var throttledBus = bus.debounce(500);
 //subscribe to the debounced bus.
-throttledBus.onValue(function(val){ updateTabList(); });
+throttledBus.onValue(function(val) { updateTabList(); });
 var groupbyNormalElement = document.getElementById("gb_as_ordered");
 var groupbyDomainElement = document.getElementById("gb_domain");
 
@@ -165,15 +164,28 @@ var groupbyNormal = Bacon.fromEvent(groupbyNormalElement, "click");
 var groupbyDomain = Bacon.fromEvent(groupbyDomainElement, "click");
 var groupbyPressed = Bacon.mergeAll(groupbyNormal, groupbyDomain);
 
-groupbyPressed.onValue(function(target){
+groupbyPressed.onValue(function(target) {
   let gbdomain = target.currentTarget.id == "gb_domain";
-  localStorage.setItem(domainSortKey, gbdomain);
-  bus.push("groupby pressed");
-
+  chrome.storage.local.set({domainSortKey: gbdomain});
 });
-var sortbyDomainBool = localStorage.getItem(domainSortKey) === "true";
-groupbyNormalElement.checked = !sortbyDomainBool;
-groupbyDomainElement.checked = sortbyDomainBool;
+
+function updateGroupByPreferences() {
+  chrome.storage.local.get(domainSortKey, (res) => {
+    groupbyNormalElement.checked = !res[domainSortKey];
+    groupbyDomainElement.checked = res[domainSortKey];
+  });
+}
+
+var storageChangedBus = new Bacon.Bus();
+var storageChangedBusThrottled = storageChangedBus.debounce(1000);
+
+chrome.storage.onChanged.addListener(function() { storageChangedBus.push("Storage Changed"); })
+
+storageChangedBusThrottled.onValue(function() {
+  updateGroupByPreferences();
+  bus.push("groupByChanged");
+});
 
 setVersion();
 updateTabList();
+updateGroupByPreferences();
