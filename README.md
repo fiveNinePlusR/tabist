@@ -6,7 +6,9 @@ Simple extension to help you find where that tab you were looking for is and act
 
 Available for [Chrome](https://chrome.google.com/webstore/detail/tabist/hdjegjggiogfkaldbfphfdkpggjemaha) and [Firefox](https://addons.mozilla.org/en-US/firefox/addon/tabist/)
 
-![Screenshot](screenshot.png)
+## Example
+
+![Example](example.gif)
 
 ## Limitations
 
