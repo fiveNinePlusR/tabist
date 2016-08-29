@@ -28,7 +28,6 @@ function makeLink(tab){
 
 function updateTabList(){
   var start = Date.now();
-  var body = document.getElementById("body");
   var maindiv = document.getElementById("content");
   maindiv.innerHTML = "";
 
@@ -58,15 +57,14 @@ function updateTabList(){
     let windowTabs = sortByDomain(groupByWindow(alltabs));
     //display a nice sequential number on the tab.
     var windowDisplayNum = 0;
-    for(let [winId, tabs] of windowTabs) {
-        //insert a new window header and change the ul
-        ul = document.createElement("ul");
+    for(let [ , tabs] of windowTabs) {
+      //insert a new window header and change the ul
+      ul = document.createElement("ul");
+      let windowTitle = document.createElement("h2");
+      windowTitle.innerText = "Window " + ++windowDisplayNum;
 
-        let windowTitle = document.createElement("h2");
-        windowTitle.innerText = "Window " + ++windowDisplayNum;
-
-        maindiv.appendChild(windowTitle);
-        maindiv.appendChild(ul);
+      maindiv.appendChild(windowTitle);
+      maindiv.appendChild(ul);
 
       for(let tab of tabs) {
         let li = document.createElement("li");
@@ -90,7 +88,7 @@ function updateTabList(){
 
     maindiv.appendChild(execTimeDiv);
   });
-};
+}
 
 function groupByWindow(tabs){
   return tabs.reduce(function(memo, cur) {
@@ -146,7 +144,7 @@ chrome.tabs.onMoved.addListener( () => { bus.push("onMoved"); });
 //moved between windows
 chrome.tabs.onAttached.addListener( () => { bus.push("onAttached"); });
 
-chrome.tabs.onUpdated.addListener( (tabId, changeInfo, tab) => {
+chrome.tabs.onUpdated.addListener( (tabId) => {
   chrome.tabs.get(tabId, tab => {
     if(tab.status == "complete"){
       bus.push("onUpdated");
@@ -156,7 +154,7 @@ chrome.tabs.onUpdated.addListener( (tabId, changeInfo, tab) => {
 
 var throttledBus = bus.debounce(500);
 //subscribe to the debounced bus.
-throttledBus.onValue(function(val) { updateTabList(); });
+throttledBus.onValue(function() { updateTabList(); });
 var groupbyNormalElement = document.getElementById("gb_as_ordered");
 var groupbyDomainElement = document.getElementById("gb_domain");
 
@@ -179,7 +177,7 @@ function updateGroupByPreferences() {
 var storageChangedBus = new Bacon.Bus();
 var storageChangedBusThrottled = storageChangedBus.debounce(1000);
 
-chrome.storage.onChanged.addListener(function() { storageChangedBus.push("Storage Changed"); })
+chrome.storage.onChanged.addListener(function() { storageChangedBus.push("Storage Changed"); });
 
 storageChangedBusThrottled.onValue(function() {
   updateGroupByPreferences();
