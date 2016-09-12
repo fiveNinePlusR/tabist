@@ -146,7 +146,7 @@ chrome.tabs.onAttached.addListener( () => { bus.push("onAttached"); });
 
 chrome.tabs.onUpdated.addListener( (tabId) => {
   chrome.tabs.get(tabId, tab => {
-    if(tab.status == "complete"){
+    if(tab.status == "complete" && tab.title != "Tabist"){
       bus.push("onUpdated");
     }
   });
