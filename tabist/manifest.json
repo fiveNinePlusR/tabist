@@ -20,7 +20,16 @@
 
   "browser_action": {
       "default_icon": "icons/page-32_white.png"
-  }
+  },
 
+  "commands": {
+      "toggle-tabist": {
+          "suggested_key": {
+              "default": "Ctrl+Shift+E",
+              "mac": "Ctrl+Shift+E",
+              "windows": "Ctrl+Shift+E"
+          }, 
+          "description": "Toggle or activate a Tabist tab"
+      }
 }
 
