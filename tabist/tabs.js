@@ -21,7 +21,8 @@ function makeLink(tab){
 
   var text = tab.title || tab.url;
   var audibleText = tab.audible ? "&#x1f508; " : "";
-  link.innerHTML = audibleText + text;
+  var favicon = tab.favIconUrl ? "<img src='" + tab.favIconUrl + "' width='24' height='24'/><span>&nbsp;</span>": "";
+  link.innerHTML = favicon + audibleText + text;
 
   return link;
 }
