@@ -1,4 +1,5 @@
 const domainSortKey = "domainSort";
+var sortByDomainValue = false;
 
 function clickHandler(){
   chrome.tabs.update(this.tabId, {active: true});
@@ -118,8 +119,7 @@ function lexSort(l,r) {
 }
 
 function sortByDomain(windows){
-  let sortByDomain = localStorage.getItem(domainSortKey) === "true";
-  if(sortByDomain){
+  if(sortByDomainValue){
     let sortedWindows = new Map();
 
     for(let [windowId, tabs] of windows){
@@ -165,13 +165,16 @@ var groupbyPressed = Bacon.mergeAll(groupbyNormal, groupbyDomain);
 
 groupbyPressed.onValue(function(target) {
   let gbdomain = target.currentTarget.id == "gb_domain";
-  chrome.storage.local.set({domainSortKey: gbdomain});
+  chrome.storage.local.set({[domainSortKey]: gbdomain});
 });
 
 function updateGroupByPreferences() {
-  chrome.storage.local.get(domainSortKey, (res) => {
-    groupbyNormalElement.checked = !res[domainSortKey];
-    groupbyDomainElement.checked = res[domainSortKey];
+  chrome.storage.local.get([domainSortKey], (res) => {
+    let value = res[domainSortKey] || false;
+    sortByDomainValue = value;
+    groupbyNormalElement.checked = !sortByDomainValue;
+    groupbyDomainElement.checked = sortByDomainValue;
+    updateTabList();
   });
 }
 
@@ -186,5 +189,4 @@ storageChangedBusThrottled.onValue(function() {
 });
 
 setVersion();
-updateTabList();
 updateGroupByPreferences();
