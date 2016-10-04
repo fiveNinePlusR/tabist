@@ -1,5 +1,6 @@
 const domainSortKey = "domainSort";
 var sortByDomainValue = false;
+var version = null;
 
 function clickHandler(){
   chrome.tabs.update(this.tabId, {active: true});
@@ -8,9 +9,13 @@ function clickHandler(){
 }
 
 function setVersion(){
-  var version = document.getElementById("version");
-  var manifest = chrome.runtime.getManifest();
-  version.innerText = "Tabist (" + manifest.version + ")";
+  var versionElement = document.getElementById("version");
+  if (!version ) {
+    var manifest = version || chrome.runtime.getManifest();
+    version = version || manifest.version;
+  }
+
+  versionElement.innerText = "Tabist (" + version + ")";
 }
 
 function makeLink(tab){
@@ -89,6 +94,7 @@ function updateTabList(){
     execTimeDiv.innerHTML = "<h4>Created In: " + extime + "ms</h4>";
 
     maindiv.appendChild(execTimeDiv);
+    setVersion();
   });
 }
 
