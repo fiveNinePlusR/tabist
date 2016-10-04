@@ -1,3 +1,5 @@
+Bacon = require("baconjs");
+
 const domainSortKey = "domainSort";
 var sortByDomainValue = false;
 var version = null;

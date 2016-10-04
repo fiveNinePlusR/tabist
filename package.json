@@ -1,0 +1,38 @@
+{
+  "name": "tabist",
+  "version": "0.1.6",
+  "description": "Simple Tab Switcher",
+  "main": " ",
+  "dependencies": {
+    "baconjs": "^0.7.85",
+    "gulp": "^3.9.1",
+    "webpack": "^1.13.2",
+    "webpack-dev-server": "^1.16.1"
+  },
+  "devDependencies": {
+    "baconjs": "^0.7.87",
+    "css-loader": "^0.25.0",
+    "style-loader": "^0.13.1",
+    "webpack": "^1.13.2",
+    "webpack-dev-server": "^1.16.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fiveNinePlusR/tabist.git"
+  },
+  "keywords": [
+    "tabs",
+    "webextension",
+    "chrome",
+    "firefox"
+  ],
+  "author": "fiveNinePlusR",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fiveNinePlusR/tabist/issues"
+  },
+  "homepage": "https://github.com/fiveNinePlusR/tabist#readme"
+}

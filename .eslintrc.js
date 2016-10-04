@@ -9,7 +9,8 @@ module.exports = {
   },
   "globals":{
     "chrome": 1,
-    "Bacon": 1
+    "Bacon": 1,
+    "require": 1
   },
 
   "rules": {
