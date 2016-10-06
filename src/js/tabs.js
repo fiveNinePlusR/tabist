@@ -188,25 +188,11 @@ function updateGroupByPreferences() {
 
 var storageChangedBus = new Bacon.Bus();
 var storageChangedBusThrottled = storageChangedBus.debounce(1000);
+chrome.storage.onChanged.addListener(() => { storageChangedBus.push("Storage Changed"); });
 
 storageChangedBusThrottled.onValue(() => {
   updateGroupByPreferences();
   bus.push("groupByChanged");
 });
-
-document.getElementById("backup_tabs").onclick = function() {
-  chrome.tabs.query({}, function(tabs) {
-    download(JSON.stringify(tabs, null, " "));
-  });
-}
-chrome.storage.onChanged.addListener(() => { storageChangedBus.push("Storage Changed"); });
-
-function download(data) {
-  var blob = new Blob([data], {type: 'text/json'});
-  var url = window.URL.createObjectURL(blob);
-  chrome.downloads.download({url:url, filename:"tabsbackup.json", conflictAction:"uniquify"}, function(downloadId) {
-    console.log(downloadId);
-  });
-}
 
 updateGroupByPreferences();
