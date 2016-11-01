@@ -1,10 +1,15 @@
-Bacon = require("baconjs");
+"use strict";
+let Bacon = require("baconjs");
 
 const domainSortKey = "domainSort";
 var sortByDomainValue = false;
 var version = null;
 
 function clickHandler(){
+  chrome.tabs.getCurrent(tab => {
+    chrome.tabs.remove(tab.id);
+  });
+
   chrome.tabs.update(this.tabId, {active: true});
   chrome.windows.update(this.windowId, {focused: true});
   return false;
@@ -18,6 +23,16 @@ function setVersion(){
   }
 
   versionElement.innerText = "Tabist (" + version + ")";
+}
+
+function setDevStatus(){
+  var statusElement = document.getElementById("developmentStatus");
+
+  chrome.management.getSelf(info => {
+    if(info.installType == "development"){
+      statusElement.innerText = "( " + info.installType + " )";
+    }
+  });
 }
 
 function makeLink(tab){
@@ -97,6 +112,7 @@ function updateTabList(){
 
     maindiv.appendChild(execTimeDiv);
     setVersion();
+    setDevStatus();
   });
 }
 
@@ -171,7 +187,7 @@ var groupbyNormal = Bacon.fromEvent(groupbyNormalElement, "click");
 var groupbyDomain = Bacon.fromEvent(groupbyDomainElement, "click");
 var groupbyPressed = Bacon.mergeAll(groupbyNormal, groupbyDomain);
 
-groupbyPressed.onValue((target) => {
+groupbyPressed.onValue(target => {
   let gbdomain = target.currentTarget.id == "gb_domain";
   chrome.storage.local.set({[domainSortKey]: gbdomain});
 });
