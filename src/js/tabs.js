@@ -4,11 +4,14 @@ let Bacon = require("baconjs");
 const domainSortKey = "domainSort";
 var sortByDomainValue = false;
 var version = null;
+var options = {};
 
-function clickHandler(){
-  chrome.tabs.getCurrent(tab => {
-    chrome.tabs.remove(tab.id);
-  });
+function clickHandler() {
+  if (options.closetab) {
+    chrome.tabs.getCurrent(tab => {
+      chrome.tabs.remove(tab.id);
+    });
+  }
 
   chrome.tabs.update(this.tabId, {active: true});
   chrome.windows.update(this.windowId, {focused: true});
@@ -155,6 +158,19 @@ function sortByDomain(windows) {
   return windows;
 }
 
+// closeTab: Close tab after clicking on a tabist link to navigate to that tab
+// pinTab: Pin the tab when opening tabist
+// autoRefresh: Refresh the tabist page automatically as events come in
+// newtab: Replace your new tab page with tabist (probably not able to do this in firefox)
+function getOptions() {
+  chrome.storage.local.get(["closeTab", "pinTab", "autoRefresh", "newtab"], res => {
+    options.closetab = res.closeTab || (res.closeTab == "undefined"); // default true
+    options.pintab = res.pinTab || false;
+    options.autorefresh = res.autoRefresh || (res.autoRefresh == "undefined"); // default true
+    options.newtab = res.newTab || false;
+  });
+}
+
 var bus = new Bacon.Bus();
 
 chrome.tabs.onCreated.addListener( () => { bus.push("onCreated"); });
@@ -179,7 +195,7 @@ chrome.tabs.onUpdated.addListener( (tabId) => {
 
 var throttledBus = bus.debounce(500);
 //subscribe to the debounced bus.
-throttledBus.onValue(() => { updateTabList(); });
+throttledBus.onValue( () => { if (options.autorefresh) { updateTabList(); }});
 var groupbyNormalElement = document.getElementById("gb_as_ordered");
 var groupbyDomainElement = document.getElementById("gb_domain");
 
@@ -211,4 +227,6 @@ storageChangedBusThrottled.onValue( () => {
   bus.push("groupByChanged");
 });
 
+// basic setup of the page
 updateGroupByPreferences();
+getOptions();
