@@ -15,7 +15,7 @@ function clickHandler(){
   return false;
 }
 
-function setVersion(){
+function setVersion() {
   var versionElement = document.getElementById("version");
   if (!version ) {
     var manifest = version || chrome.runtime.getManifest();
@@ -25,7 +25,7 @@ function setVersion(){
   versionElement.innerText = "Tabist (" + version + ")";
 }
 
-function setDevStatus(){
+function setDevStatus() {
   var statusElement = document.getElementById("developmentStatus");
 
   chrome.management.getSelf(info => {
@@ -35,7 +35,7 @@ function setDevStatus(){
   });
 }
 
-function makeLink(tab){
+function makeLink(tab) {
   var link = document.createElement("a");
   link.href = "#";
   link.onclick = clickHandler;
@@ -50,7 +50,7 @@ function makeLink(tab){
   return link;
 }
 
-function updateTabList(){
+function updateTabList() {
   var start = Date.now();
   var maindiv = document.getElementById("content");
   maindiv.innerHTML = "";
@@ -116,7 +116,7 @@ function updateTabList(){
   });
 }
 
-function groupByWindow(tabs){
+function groupByWindow(tabs) {
   return tabs.reduce(function(memo, cur) {
     let win = memo.get(cur.windowId) || [];
 
@@ -142,7 +142,7 @@ function lexSort(l,r) {
   return 0;
 }
 
-function sortByDomain(windows){
+function sortByDomain(windows) {
   if(sortByDomainValue){
     let sortedWindows = new Map();
 
@@ -157,8 +157,8 @@ function sortByDomain(windows){
 
 var bus = new Bacon.Bus();
 
-chrome.tabs.onCreated.addListener(() => { bus.push("onCreated"); });
-chrome.tabs.onRemoved.addListener(() => {
+chrome.tabs.onCreated.addListener( () => { bus.push("onCreated"); });
+chrome.tabs.onRemoved.addListener( () => {
   window.setTimeout(() => { bus.push("onRemoved Delayed"); }, 2000); // FIXME: needed for firefox until this is resolved https://bugzilla.mozilla.org/show_bug.cgi?id=1291830
   bus.push("onRemoved");
 });
@@ -187,7 +187,7 @@ var groupbyNormal = Bacon.fromEvent(groupbyNormalElement, "click");
 var groupbyDomain = Bacon.fromEvent(groupbyDomainElement, "click");
 var groupbyPressed = Bacon.mergeAll(groupbyNormal, groupbyDomain);
 
-groupbyPressed.onValue(target => {
+groupbyPressed.onValue( target => {
   let gbdomain = target.currentTarget.id == "gb_domain";
   chrome.storage.local.set({[domainSortKey]: gbdomain});
 });
@@ -204,9 +204,9 @@ function updateGroupByPreferences() {
 
 var storageChangedBus = new Bacon.Bus();
 var storageChangedBusThrottled = storageChangedBus.debounce(1000);
-chrome.storage.onChanged.addListener(() => { storageChangedBus.push("Storage Changed"); });
+chrome.storage.onChanged.addListener( () => { storageChangedBus.push("Storage Changed"); });
 
-storageChangedBusThrottled.onValue(() => {
+storageChangedBusThrottled.onValue( () => {
   updateGroupByPreferences();
   bus.push("groupByChanged");
 });
