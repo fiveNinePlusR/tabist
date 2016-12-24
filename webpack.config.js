@@ -1,8 +1,13 @@
+const path = require('path');
+
 module.exports = {
-  entry: "./src/js/tabs.js",
+  entry: {
+    tabs: "./src/js/tabs.js",
+    options: "./src/js/options.js"
+         },
   output: {
-    path: __dirname + "/tabist",
-    filename: "tabs.js"
+    path: PATHS.build,
+    filename: "[name].js"
   },
   module: {
     loaders: [
