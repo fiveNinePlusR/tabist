@@ -68,7 +68,11 @@ document.getElementById("restore_tabs").onclick = function() {
 // input [tabs]
 // returns [urls]
 function getLinksFromTabs(tabs) {
-  return tabs.reduce((memo, cur) => { memo = memo || []; memo.push(cur.url); return memo; }, []);
+  return tabs.reduce((memo, cur) => {
+    memo = memo || [];
+    memo.push(cur.url);
+    return memo;
+  }, []);
 }
 
 function download(data) {
