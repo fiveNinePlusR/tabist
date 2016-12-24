@@ -49,7 +49,7 @@ document.getElementById("restore_tabs").onclick = function() {
         if (json) {
           let wins = Utils.groupByWindow(json);
           for (let [win, tabs] of wins) {
-            let links = getLinksFromTabs(tabs);
+            let links = Utils.getLinksFromTabs(tabs);
             console.log(links);
             // chrome.windows.create({ url: links });
           }
@@ -63,17 +63,6 @@ document.getElementById("restore_tabs").onclick = function() {
   }, false);
   fileinput.click();
 };
-
-// returns an array of tabs for a set of tabs 
-// input [tabs]
-// returns [urls]
-function getLinksFromTabs(tabs) {
-  return tabs.reduce((memo, cur) => {
-    memo = memo || [];
-    memo.push(cur.url);
-    return memo;
-  }, []);
-}
 
 function download(data) {
   var blob = new Blob([data], {type: "text/json"});

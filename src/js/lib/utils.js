@@ -43,7 +43,19 @@ let  Utils = {
       return sortedWindows;
     }
     return windows;
+  },
+
+  // returns an array of tabs for a set of tabs 
+  // input [tabs]
+  // returns [urls]
+  getLinksFromTabs(tabs) {
+    return tabs.reduce((memo, cur) => {
+      memo = memo || [];
+      memo.push(cur.url);
+      return memo;
+    }, []);
   }
+
 };
 
 module.exports = Utils;
