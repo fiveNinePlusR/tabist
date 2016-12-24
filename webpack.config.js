@@ -6,7 +6,7 @@ module.exports = {
     options: "./src/js/options.js"
          },
   output: {
-    path: PATHS.build,
+    path: "./tabist/",
     filename: "[name].js"
   },
   module: {

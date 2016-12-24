@@ -1,5 +1,6 @@
 "use strict";
 let Bacon = require("baconjs");
+const Utils = require("./lib/utils.js");
 
 const domainSortKey = "domainSort";
 var sortByDomainValue = false;
@@ -54,51 +55,6 @@ function makeLink(tab) {
   return link;
 }
 
-// returns tabs grouped by window
-// input [tabs]
-// Map {window_id => [tab]+}
-function groupByWindow(tabs) {
-  return tabs.reduce(function(memo, cur) {
-    let win = memo.get(cur.windowId) || [];
-
-    win.push(cur);
-    memo.set(cur.windowId, win);
-
-    return memo;
-  }, new Map());
-}
-
-function lexSort(l,r) {
-  let left = new URL(l.url);
-  let right = new URL(r.url);
-  left = left.hostname || left.href;
-  right = right.hostname || right.href;
-
-  if(left > right) {
-    return 1;
-  }
-  if(left < right) {
-    return -1;
-  }
-  return 0;
-}
-
-// Sorts a Map of window_ids with an array of tabs as the values by the domain of the url.
-// input Map {window_ids => [tab]+}
-// returns Map {window_ids => [sorted_tabs]}
-function sortByDomain(windows) {
-  if(sortByDomainValue){
-    let sortedWindows = new Map();
-
-    for(let [windowId, tabs] of windows){
-      let sortedTabs = tabs.sort(lexSort);
-      sortedWindows.set(windowId, sortedTabs);
-    }
-    return sortedWindows;
-  }
-  return windows;
-}
-
 // Main update routine
 function updateTabList() {
   var start = Date.now();
@@ -128,7 +84,7 @@ function updateTabList() {
 
   //loop through the tabs and group them by windows for display
   chrome.tabs.query({}, function(alltabs){
-    let windowTabs = sortByDomain(groupByWindow(alltabs));
+    let windowTabs = Utils.sortByDomain(sortByDomainValue, Utils.groupByWindow(alltabs));
     //display a nice sequential number on the tab.
     var windowDisplayNum = 0;
     for(let [ , tabs] of windowTabs) {

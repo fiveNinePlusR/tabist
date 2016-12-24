@@ -1,4 +1,4 @@
-let utils = require("./lib/utils.js");
+let Utils = require("./lib/utils.js");
 
 function saveOptions() {
   chrome.storage.local.set({
@@ -47,11 +47,11 @@ document.getElementById("restore_tabs").onclick = function() {
         let data = window.atob(restoredata);
         let json = JSON.parse(data);
         if (json) {
-          let wins = groupByWindow(json);
+          let wins = Utils.groupByWindow(json);
           for (let [win, tabs] of wins) {
             let links = getLinksFromTabs(tabs);
             console.log(links);
-            chrome.windows.create({ url: links });
+            // chrome.windows.create({ url: links });
           }
         }
       } catch(e){
