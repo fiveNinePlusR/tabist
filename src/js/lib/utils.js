@@ -1,4 +1,3 @@
-
 let  Utils = {
   // returns tabs grouped by window
   // input [tabs]

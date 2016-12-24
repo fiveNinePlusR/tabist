@@ -51,7 +51,7 @@ document.getElementById("restore_tabs").onclick = function() {
           for (let [win, tabs] of wins) {
             let links = Utils.getLinksFromTabs(tabs);
             console.log(links);
-            // chrome.windows.create({ url: links });
+            chrome.windows.create({ url: links });
           }
         }
       } catch(e){
