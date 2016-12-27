@@ -3,30 +3,47 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <link rel="stylesheet" type="text/css" href="tabs.css">
-      <title>Tabist</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="styles/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="styles/tabs.css">
+    <title>Tabist</title>
   </head>
 
 <body id="body">
+<div class="container">
   <h1>Tabist</h1>
-  <div id="controls">
-  	<h3>Group By</h3>
-  	<input type="radio" name="group_by_radiobutton" id="gb_as_ordered" value="As Ordered" text="As Ordered">As Ordered</input>
-  	</br>
-  	<input type="radio" name="group_by_radiobutton" id="gb_domain" value="By Domain">By Domain</input></br>
-  	<h3>Order By</h3>
-  	<input type="radio" name="order_by_radiobutton" id="orderby_natural" value="As Opened" text="As Opened">As Opened</input>
-  	</br>
-  	<input type="radio" name="order_by_radiobutton" id="orderby_reverse" value="Reverse Order" text="Reverse Order">Reverse Order</input>
-  	</br>
-  	<input type="radio" name="order_by_radiobutton" id="orderby_mru" value="Most Recently Used" text="Most Recently Used">Most Recently Used</input>
-  	</br>
-    <a id="options_link" href="options.html">Options</a>
+  <div id="controls" class="container">
+    <div class="row" class="controls-selections">
+      <div class="col-sm-5">
+        <h3>Group By</h3>
+        <input type="checkbox" name="group_by_radiobutton" class="form-check-input" id="gb_window" value="Window" text="Window">By Window</input>
+        <br>
+        <input type="checkbox" name="group_by_radiobutton" class="form-check-input" id="gb_domain" value="By Domain">By Domain</input><br>
+      </div>
+      <div class="col-sm-5">
+        <h3>Order By</h3>
+        <input type="radio" name="order_by_radiobutton" class="form-check-input" id="orderby_natural" value="As Opened" text="As Opened">As Opened</input>
+        <br>
+        <input type="radio" name="order_by_radiobutton" class="form-check-input" id="orderby_reverse" value="Reverse Order" text="Reverse Order">Reverse Order</input>
+        <br>
+        <input type="radio" name="order_by_radiobutton" class="form-check-input" id="orderby_mru" value="Most Recently Used" text="Most Recently Used">Most Recently Used</input>
+        <br>
+      </div>
+    </div>
+    <a class="btn btn-secondary" id="options_link" href="options.html">Options</a>
+    <hr>
   </div>
   <div id="content"></div>
   <h3 id="version"></h3>
-  <h4 id="developmentStatus"></h3>
+  <h4 id="developmentStatus"></h4>
   <a href="https://github.com/fiveNinePlusR/tabist/issues">Problems? Suggestions? Report feedback or issues here</a>
+
+  <!-- required by bootstrap -->
+  <script src="lib/js/jquery.min.js" ></script>
+  <script src="lib/js/tether.min.js" ></script>
+  <script src="lib/js/bootstrap.min.js" ></script>
+
+  </div>
 </body>
 
 <script src="tabs.js"></script>

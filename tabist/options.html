@@ -3,40 +3,45 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <link rel="stylesheet" type="text/css" href="tabs.css">
-      <title>Tabist</title>
+    <link rel="stylesheet"/ type="text/css" href="styles/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="styles/tabs.css">
+    <title>Tabist</title>
   </head>
 
-<body id="body">
-  <h1>Tabist Options</h1>
-  <a href ="tabs.html"><- Back</a>
-  <div id="form">
-    <form>
-      <label>Close Tabist Tab After Clicking on a Link:<input type="checkbox" id="close_tab"></label>
+  <body id="body">
+    <h1>Tabist Options</h1>
+    <a href="tabs.html" class="btn btn-secondary">Back</a>
+    <div id="form">
+      <form>
+        <label>Close Tabist Tab After Clicking on a Link:<input type="checkbox" id="close_tab"></label>
 
-      <br>
-      <label>Pin Tabist Tab:<input type="checkbox" id="pin_tab"/></label>
-      <br>
+        <br>
+        <label>Pin Tabist Tab:<input type="checkbox" id="pin_tab"/></label>
+        <br>
 
-      <label>Auto Refresh:<input type="checkbox" id="autorefresh_tab"/></label>
-      <br>
+        <label>Auto Refresh:<input type="checkbox" id="autorefresh_tab"/></label>
+        <br>
 
-      <label>Use as New Tab Page:<input type="checkbox" id="newtab_tab"/></label>
-      <br>
+        <label>Use as New Tab Page:<input type="checkbox" id="newtab_tab"/></label>
+        <br>
 
-      <label>Show Domain Name:<input type="checkbox" id="show_domain_tab"/></label>
-      <br>
+        <label>Show Domain Name:<input type="checkbox" id="show_domain_tab"/></label>
+        <br>
 
-      <button type="submit">Save Options</button>
-    </form>
+        <button class="btn btn-primary" type="submit">Save Options</button>
+      </form>
+    </div>
 
-  	<button id="backup_tabs">Backup Tabs</button>
-    <br>
-  	<button id="restore_tabs">Restore Tabs</button>
-    <br>
-  	<input type="file" id="restore_tabs_file" style="display:none"></input>
-    <br>
-</body>
+      <div class="backup-restore-div">
+        <h2>Tab Backup and Restore</h2>
+  	    <button class="btn btn-secondary" id="backup_tabs">Backup Tabs</button>
+        <br>
+  	    <button class="btn btn-secondary" id="restore_tabs">Restore Tabs</button>
+        <br>
+  	    <input type="file" id="restore_tabs_file" style="display:none"></input>
+        <br>
+      </div>
+  </body>
 
-<script src="options.js"></script>
+  <script src="options.js"></script>
 </html>
