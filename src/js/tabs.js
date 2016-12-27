@@ -2,7 +2,18 @@
 let Bacon = require("baconjs");
 const Utils = require("./lib/utils.js");
 
-const domainSortKey = "domainSort";
+const KEYS = {
+  GROUP: {
+    DOMAIN: "domainGroup",
+    WINDOW: "windowGroup"
+  },
+  SORT: {
+    NATURAL: "natrualSort",
+    REVERSE: "reverseSort",
+    MRU: "mruSort"
+  }
+};
+
 var sortByDomainValue = false;
 var version = null;
 var options = {};
@@ -160,7 +171,7 @@ chrome.tabs.onUpdated.addListener( (tabId) => {
 var throttledBus = bus.debounce(500);
 //subscribe to the debounced bus.
 throttledBus.onValue( () => { if (options.autorefresh) { updateTabList(); }});
-var groupbyNormalElement = document.getElementById("gb_as_ordered");
+var groupbyNormalElement = document.getElementById("gb_window");
 var groupbyDomainElement = document.getElementById("gb_domain");
 
 var groupbyNormal = Bacon.fromEvent(groupbyNormalElement, "click");
@@ -169,12 +180,12 @@ var groupbyPressed = Bacon.mergeAll(groupbyNormal, groupbyDomain);
 
 groupbyPressed.onValue( target => {
   let gbdomain = target.currentTarget.id == "gb_domain";
-  chrome.storage.local.set({[domainSortKey]: gbdomain});
+  chrome.storage.local.set({[KEYS.GROUP.DOMAIN]: gbdomain});
 });
 
 function updateGroupByPreferences() {
-  chrome.storage.local.get([domainSortKey], (res) => {
-    let value = res[domainSortKey] || false;
+  chrome.storage.local.get([KEYS.GROUP.DOMAIN], (res) => {
+    let value = res[KEYS.GROUP.DOMAIN] || false;
     sortByDomainValue = value;
     groupbyNormalElement.checked = !sortByDomainValue;
     groupbyDomainElement.checked = sortByDomainValue;
