@@ -50,10 +50,21 @@ let  Utils = {
   getLinksFromTabs(tabs) {
     return tabs.reduce((memo, cur) => {
       memo = memo || [];
-      memo.push(cur.url);
+      memo.push(this.handleSpecialURIs(cur.url));
       return memo;
-    }, []);
+    }, [])
+      .filter(val => val);
+  },
+
+  handleSpecialURIs(url) {
+    //might need to handle about:config, performance etc.
+    if (url.search("http") >= 0) {
+      return decodeURIComponent(url.replace("about:reader?url=",""));
+    }
+
+    return null;
   }
+
 
 };
 
