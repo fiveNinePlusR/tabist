@@ -1,4 +1,5 @@
 let Utils = require("./lib/utils.js");
+let Bacon = require("baconjs");
 
 function saveOptions() {
   chrome.storage.local.set({
@@ -25,6 +26,8 @@ function restoreOptions() {
   });
 }
 
+// Bacon.fromEvent();
+
 document.addEventListener("DOMContentLoaded", restoreOptions);
 document.querySelector("form").addEventListener("submit", saveOptions);
 
@@ -35,39 +38,41 @@ document.getElementById("backup_tabs").onclick = function() {
   });
 };
 
+let restoreTab = Bacon.fromEvent(document.getElementById("restore_tabs_file"), "change");
+let fileinput = document.getElementById("restore_tabs_file");
+
 document.getElementById("restore_tabs").onclick = function() {
-  let fileinput = document.getElementById("restore_tabs_file");
-  fileinput.addEventListener("change", function () {
-    let filelist = this.files;
-    var reader = new FileReader();
-
-    reader.onload = (function() { return function(e) {
-      let restoredata = e.target.result.replace(/^[^,]*,/g, "");
-      try{
-        let data = window.atob(restoredata);
-        let json = JSON.parse(data);
-        if (json) {
-          let wins = Utils.groupByWindow(json);
-          for (let [win, tabs] of wins) {
-            let links = Utils.getLinksFromTabs(tabs);
-            console.log(links);
-            chrome.windows.create({ url: links });
-          }
-        }
-      } catch(e){
-        console.log(e);
-      }
-    }; })();
-
-    reader.readAsDataURL(filelist[0]);
-  }, false);
   fileinput.click();
 };
+
+restoreTab.onValue(() => {
+  let filelist = fileinput.files;
+  var reader = new FileReader();
+
+  reader.onload = (function() { return function(e) {
+    let restoredata = e.target.result.replace(/^[^,]*,/g, "");
+    try{
+      let data = window.atob(restoredata);
+      let json = JSON.parse(data);
+      if (json) {
+        let wins = Utils.groupByWindow(json);
+        for (let [_, tabs] of wins) {
+          let links = Utils.getLinksFromTabs(tabs);
+          chrome.windows.create({ url: links });
+        }
+      }
+    } catch(e){
+      console.error(e);
+    }
+  }; })();
+
+  reader.readAsDataURL(filelist[0]);
+});
 
 function download(data) {
   var blob = new Blob([data], {type: "text/json"});
   var url = window.URL.createObjectURL(blob);
-  chrome.downloads.download({url:url, filename:"tabsbackup.json", conflictAction:"uniquify"}, function(downloadId) {
+  chrome.downloads.download({url:url, filename:"tabsbackup.json", conflictAction:"uniquify"}, function() {
     // console.log(downloadId);
   });
 }
