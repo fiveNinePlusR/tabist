@@ -49,7 +49,11 @@ restoreTab.onValue(() => {
   let filelist = fileinput.files;
   var reader = new FileReader();
 
-  reader.onload = (function() { return function(e) {
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  reader.onload = (function() { return async function(e) {
     let restoredata = e.target.result.replace(/^[^,]*,/g, "");
     try{
       let data = window.atob(restoredata);
@@ -59,6 +63,7 @@ restoreTab.onValue(() => {
         for (let [_, tabs] of wins) {
           let links = Utils.getLinksFromTabs(tabs);
           chrome.windows.create({ url: links });
+          await sleep(1000);
         }
       }
     } catch(e){
