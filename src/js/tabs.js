@@ -8,7 +8,7 @@ const KEYS = {
     WINDOW: "windowGroup"
   },
   SORT: {
-    NATURAL: "natrualSort",
+    NATURAL: "naturalSort",
     REVERSE: "reverseSort",
     MRU: "mruSort"
   }
