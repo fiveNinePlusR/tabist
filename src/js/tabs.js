@@ -66,7 +66,9 @@ function makeLink(tab) {
   return link;
 }
 
+// ======================================
 // Main update routine
+// ======================================
 function updateTabList() {
   var start = Date.now();
   var maindiv = document.getElementById("content");
