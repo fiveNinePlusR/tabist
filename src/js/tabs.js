@@ -58,10 +58,12 @@ function makeLink(tab) {
   link.tabId = tab.id;
   link.windowId = tab.windowId;
 
-  var text = tab.title || tab.url;
+  var linkText = tab.title || tab.url;
+  var isActive = tab.active ? " <span style='color:darkred'> &raquo; (Selected)</span> " : "" ;
+
   var audibleText = tab.audible ? "&#x1f508; " : "";
   var favicon = tab.favIconUrl ? "<img src='" + tab.favIconUrl + "' width='24' height='24'/><span>&nbsp;</span>": "";
-  link.innerHTML = favicon + audibleText + text;
+  link.innerHTML = favicon + audibleText + linkText + isActive;
 
   return link;
 }
