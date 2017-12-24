@@ -7,7 +7,7 @@ function saveOptions() {
     pinTab: document.querySelector("#pin_tab").checked,
     autoRefresh: document.querySelector("#autorefresh_tab").checked,
     newTab: document.querySelector("#newtab_tab").checked,
-    showDomain: document.querySelector("#show_domain_tab").checked,
+    showDomain: document.querySelector("#show_domain_tab").checked
   });
 }
 
@@ -53,7 +53,7 @@ restoreTab.onValue(() => {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  reader.onload = (function() { return async function(e) {
+  reader.onload = (function() { return function(e) {
     let restoredata = e.target.result.replace(/^[^,]*,/g, "");
     try{
       let data = window.atob(restoredata);
@@ -63,7 +63,7 @@ restoreTab.onValue(() => {
         for (let [_, tabs] of wins) {
           let links = Utils.getLinksFromTabs(tabs);
           chrome.windows.create({ url: links });
-          await sleep(1000);
+          // await sleep(1000);
         }
       }
     } catch(e){
