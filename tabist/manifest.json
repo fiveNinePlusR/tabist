@@ -23,6 +23,12 @@
       "default_icon": "icons/page-32_white.png"
   },
 
+  "sidebar_action": {
+    "default_icon": "icons/page-32_white.png",
+    "default_title" : "Tabist",
+    "default_panel": "tabs.html"
+  },
+
   "commands": {
       "toggle-tabist": {
           "suggested_key": {
