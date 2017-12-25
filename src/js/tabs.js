@@ -1,3 +1,9 @@
+// drag n drop stuff
+// other options https://news.ycombinator.com/item?id=15368104
+// https://github.com/Shopify/draggable
+// http://react-dnd.github.io/react-dnd/
+// https://bevacqua.github.io/dragula/ <- might be the best one.
+
 "use strict";
 let Bacon = require("baconjs");
 const Utils = require("./lib/utils.js");
