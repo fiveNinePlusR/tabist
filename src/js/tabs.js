@@ -209,6 +209,18 @@ storageChangedBusThrottled.onValue( () => {
 var refreshButton = document.getElementById("refresh_link");
 refreshButton.addEventListener('click', () => { updateTabList(); }, false);
 
+var optionsButton = document.getElementById("display_options_link");
+optionsButton.addEventListener('click', () => { hideShowOptionsPanel(); }, false);
+
+function hideShowOptionsPanel() {
+  var optionsPanel = document.getElementById("controls");
+  console.log(optionsPanel);
+  optionsPanel.hidden = !optionsPanel.hidden;
+  optionsButton.innerText = optionsPanel.hidden ? "Show Options" : "Hide Options";
+};
+
 // basic setup of the page
 updateGroupByPreferences();
 getOptions();
+hideShowOptionsPanel() {
+
