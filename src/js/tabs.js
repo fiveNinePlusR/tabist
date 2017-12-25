@@ -206,6 +206,9 @@ storageChangedBusThrottled.onValue( () => {
   bus.push("groupByChanged");
 });
 
+var refreshButton = document.getElementById("refresh_link");
+refreshButton.addEventListener('click', () => { updateTabList(); }, false);
+
 // basic setup of the page
 updateGroupByPreferences();
 getOptions();
