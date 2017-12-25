@@ -37,6 +37,14 @@
               "windows": "Ctrl+Shift+E"
           },
           "description": "Toggle or activate a Tabist tab"
+      },
+      "_execute_sidebar_action": {
+          "suggested_key": {
+              "default": "Ctrl+Shift+S",
+              "mac": "Ctrl+Shift+S",
+              "windows": "Ctrl+Shift+S"
+          },
+          "description": "Toggle or activate a Tabist sidebar"
       }
   }
 }
