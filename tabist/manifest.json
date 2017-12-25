@@ -35,7 +35,7 @@
               "default": "Ctrl+Shift+E",
               "mac": "Ctrl+Shift+E",
               "windows": "Ctrl+Shift+E"
-          }, 
+          },
           "description": "Toggle or activate a Tabist tab"
       }
   }
