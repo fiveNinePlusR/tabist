@@ -40,9 +40,9 @@
       },
       "_execute_sidebar_action": {
           "suggested_key": {
-              "default": "Ctrl+Shift+S",
+              "default": "Ctrl+Shift+Z",
               "mac": "Ctrl+Shift+S",
-              "windows": "Ctrl+Shift+S"
+              "windows": "Ctrl+Shift+Z"
           },
           "description": "Toggle or activate a Tabist sidebar"
       }
