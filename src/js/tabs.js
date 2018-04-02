@@ -105,7 +105,10 @@ function updateTabList() {
 
   //loop through the tabs and group them by windows for display
   chrome.tabs.query({}, function(alltabs){
-    let windowTabs = Utils.sortByDomain(sortByDomainValue, Utils.groupByWindow(alltabs));
+    let sortType = groupbyDomainElement.checked ? "domain": "window";
+    let groups = Utils.groupTabs(alltabs, sortType);
+    let windowTabs = Utils.sortByDomain(sortByDomainValue, groups);
+
     //display a nice sequential number on the tab.
     var windowDisplayNum = 0;
     for(let [ , tabs] of windowTabs) {
@@ -220,7 +223,7 @@ optionsButton.addEventListener('click', () => { hideShowOptionsPanel(); }, false
 
 function hideShowOptionsPanel() {
   var optionsPanel = document.getElementById("controls");
-  console.log(optionsPanel);
+  // console.log(optionsPanel);
   optionsPanel.hidden = !optionsPanel.hidden;
   optionsButton.innerText = optionsPanel.hidden ? "Show Options" : "Hide Options";
 };
@@ -228,5 +231,5 @@ function hideShowOptionsPanel() {
 // basic setup of the page
 updateGroupByPreferences();
 getOptions();
-hideShowOptionsPanel() {
+hideShowOptionsPanel();
 

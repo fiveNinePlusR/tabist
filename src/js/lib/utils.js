@@ -1,4 +1,15 @@
 let  Utils = {
+  groupTabs(tabs, method) {
+    if (method == "window") {
+      return this.groupByWindow(tabs);
+    } else if ( method == "domain") {
+      return this.groupByDomain(tabs);
+    }
+
+    console.log("problem getting group by preference");
+    return this.groupByWindow(tabs);
+  },
+
   // returns tabs grouped by window
   // input [tabs]
   // Map {window_id => [tab]+}
@@ -8,6 +19,21 @@ let  Utils = {
 
       win.push(cur);
       memo.set(cur.windowId, win);
+
+      return memo;
+    }, new Map());
+  },
+
+  // returns tabs grouped by domain name
+  // input [tabs]
+  // Map {baseDomain => [tab]+}
+  groupByDomain(tabs) {
+    return tabs.reduce(function(memo, cur) {
+      let url = new URL(cur.url);
+      let win = memo.get(url.hostname) || [];
+
+      win.push(cur);
+      memo.set(url.hostname, win);
 
       return memo;
     }, new Map());
