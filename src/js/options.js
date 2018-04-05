@@ -4,9 +4,9 @@ let Bacon = require("baconjs");
 function saveOptions() {
   chrome.storage.local.set({
     closeTab: document.querySelector("#close_tab").checked,
-    pinTab: document.querySelector("#pin_tab").checked,
+    // pinTab: document.querySelector("#pin_tab").checked,
     autoRefresh: document.querySelector("#autorefresh_tab").checked,
-    newTab: document.querySelector("#newtab_tab").checked,
+    // newTab: document.querySelector("#newtab_tab").checked,
     showDomain: document.querySelector("#show_domain_tab").checked
   });
 }
@@ -19,9 +19,9 @@ function restoreOptions() {
     let newtab = res.newTab;
     let showdomain = res.showDomain;
     document.querySelector("#close_tab").checked = closetab || false;
-    document.querySelector("#pin_tab").checked = pintab || false;
+    // document.querySelector("#pin_tab").checked = pintab || false;
     document.querySelector("#autorefresh_tab").checked = autorefresh || false;
-    document.querySelector("#newtab_tab").checked = newtab || false;
+    // document.querySelector("#newtab_tab").checked = newtab || false;
     document.querySelector("#show_domain_tab").checked = showdomain || false;
   });
 }

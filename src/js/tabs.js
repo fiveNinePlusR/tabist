@@ -56,73 +56,49 @@ function setDevStatus() {
   });
 }
 
-// Returns a link object for a tab with click handlers set
-function makeLink(tab) {
-  var link = document.createElement("a");
-  link.href = "#";
-  link.onclick = clickHandler;
-  link.tabId = tab.id;
-  link.windowId = tab.windowId;
-
-  var linkText = tab.title || tab.url;
-  var isActive = tab.active ? " <span style='color:darkred'> &raquo; (Selected)</span> " : "" ;
-
-  var audibleText = tab.audible ? "&#x1f508; " : "";
-  var favicon = tab.favIconUrl ? "<img src='" + tab.favIconUrl + "' width='24' height='24'/><span>&nbsp;</span>": "";
-  link.innerHTML = favicon + audibleText + linkText + isActive;
-
-  return link;
-}
-
 // ======================================
 // Main update routine
 // ======================================
 function updateTabList() {
   var start = Date.now();
-  var maindiv = document.getElementById("content");
-  maindiv.innerHTML = "";
+  var tabList = document.createElement("div");
 
   var ul = null;
 
   //loop through the audible tabs
-  chrome.tabs.query({audible: true}, function(tabs){
-    if (tabs.length > 0){
-      var AudibleTitle = document.createElement("h2");
-      AudibleTitle.innerText = "Audible Tabs";
-      maindiv.appendChild(AudibleTitle);
-      ul = document.createElement("ul");
-      maindiv.appendChild(ul);
+  chrome.tabs.query({}, function(tabs){
+    let audibleTabs = tabs.filter(tab => tab.audible);
 
-      for(let tab of tabs){
-        var link = makeLink(tab);
-        var li = document.createElement("li");
-
-        li.appendChild(link);
-        ul.appendChild(li);
-      }
+    if (audibleTabs.length > 0) {
+      let audibleElement = Utils.createAudibleElement(audibleTabs);
+      tabList.appendChild(audibleElement);
     }
-  });
 
-  //loop through the tabs and group them by windows for display
-  chrome.tabs.query({}, function(alltabs){
+    // //loop through the tabs and group them by windows for display
     let sortType = groupbyDomainElement.checked ? "domain": "window";
-    let groups = Utils.groupTabs(alltabs, sortType);
+    let groups = Utils.groupTabs(tabs, sortType);
     let windowTabs = Utils.sortByDomain(sortByDomainValue, groups);
 
     //display a nice sequential number on the tab.
     var windowDisplayNum = 0;
-    for(let [ , tabs] of windowTabs) {
+    for(let [domain, tabs] of windowTabs) {
+      windowDisplayNum++;
       //insert a new window header and change the ul
       ul = document.createElement("ul");
       let windowTitle = document.createElement("h2");
-      windowTitle.innerText = "Window " + ++windowDisplayNum;
+      if (sortType == "domain") {
+        let domainName = domain == "Misc" ? "Misc." : new URL(tabs[0].url).hostname;
+        windowTitle.innerText = domainName.replace("www.", "");
+      } else {
+        windowTitle.innerText = "Window " + windowDisplayNum;
+      }
 
-      maindiv.appendChild(windowTitle);
-      maindiv.appendChild(ul);
+      tabList.appendChild(windowTitle);
+      tabList.appendChild(ul);
 
       for(let tab of tabs) {
         let li = document.createElement("li");
-        let link = makeLink(tab);
+        let link = Utils.makeLink(tab, clickHandler);
         li.appendChild(link);
         ul.appendChild(li);
       }
@@ -130,19 +106,23 @@ function updateTabList() {
 
     var tabCountDiv = document.createElement("div");
     var statisticsText = "<h2>Total Windows: " + windowDisplayNum + "</h2>";
-    statisticsText += "<h2>Total Tabs: " + alltabs.length + "</h2>";
-    statisticsText += "<h2>Average Tabs Per Window: " + (alltabs.length/windowDisplayNum).toFixed(2) + "</h2>";
+    statisticsText += "<h2>Total Tabs: " + tabs.length + "</h2>";
+    statisticsText += "<h2>Average Tabs Per Window: " + (tabs.length/windowDisplayNum).toFixed(2) + "</h2>";
     tabCountDiv.innerHTML = statisticsText;
 
-    maindiv.appendChild(tabCountDiv);
+    tabList.appendChild(tabCountDiv);
     let end = Date.now();
     let extime = end - start;
     let execTimeDiv = document.createElement("div");
     execTimeDiv.innerHTML = "<h4>Created In: " + extime + "ms</h4>";
 
-    maindiv.appendChild(execTimeDiv);
+    tabList.appendChild(execTimeDiv);
     setVersion();
     setDevStatus();
+
+    var maindiv = document.getElementById("content");
+    maindiv.innerHTML = "";
+    maindiv.appendChild(tabList);
   });
 }
 

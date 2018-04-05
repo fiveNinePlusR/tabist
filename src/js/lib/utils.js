@@ -28,7 +28,8 @@ let  Utils = {
   // input [tabs]
   // Map {baseDomain => [tab]+}
   groupByDomain(tabs) {
-    return tabs.reduce(function(memo, cur) {
+    let returnValue = new Map();
+    let tabmap =  tabs.reduce(function(memo, cur) {
       let url = new URL(cur.url);
       let win = memo.get(url.hostname) || [];
 
@@ -37,6 +38,46 @@ let  Utils = {
 
       return memo;
     }, new Map());
+
+    for(let [domain, tablist] of tabmap) {
+      if (tablist.length == 1){
+        // group the misc domains into one group
+        let misc = returnValue.get("Misc") || [];
+
+        misc.push(tablist[0]);
+        returnValue.set("Misc", misc);
+      } else {
+        returnValue.set(domain, tablist);
+      }
+    }
+
+    return returnValue;
+  },
+
+  // Creates the audible elements division at the top of the page.
+  createAudibleElement(tabs) {
+    let returnval = document.createElement("div");
+
+    // section title
+    var AudibleTitle = document.createElement("h2");
+    AudibleTitle.innerText = "Audible Tabs";
+    returnval.appendChild(AudibleTitle);
+
+    // each tab
+    tabs.forEach( (audibleTab) => {
+      ul = document.createElement("ul");
+      returnval.appendChild(ul);
+
+      for(let tab of tabs) {
+        var link = Utils.makeLink(tab);
+        var li = document.createElement("li");
+
+        li.appendChild(link);
+        ul.appendChild(li);
+      }
+    });
+
+    return returnval;
   },
 
   lexSort(l,r) {
@@ -68,6 +109,24 @@ let  Utils = {
       return sortedWindows;
     }
     return windows;
+  },
+
+  // Returns a link object for a tab with click handlers set
+  makeLink(tab, clickHandler) {
+    var link = document.createElement("a");
+    link.href = "#";
+    link.onclick = clickHandler;
+    link.tabId = tab.id;
+    link.windowId = tab.windowId;
+
+    var linkText = tab.title || tab.url;
+    var isActive = tab.active ? " <span style='color:darkred'> &raquo; (Selected)</span> " : "" ;
+
+    var audibleText = tab.audible ? "&#x1f508; " : "";
+    var favicon = tab.favIconUrl ? "<img src='" + tab.favIconUrl + "' width='24' height='24'/><span>&nbsp;</span>": "";
+    link.innerHTML = favicon + audibleText + linkText + isActive;
+
+    return link;
   },
 
   // returns an array of tabs for a set of tabs 
