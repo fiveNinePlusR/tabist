@@ -1,3 +1,5 @@
+import React from "react";
+
 // drag n drop stuff
 // other options https://news.ycombinator.com/item?id=15368104
 // https://github.com/Shopify/draggable
