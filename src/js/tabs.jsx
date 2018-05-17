@@ -1,14 +1,20 @@
-import React from "react";
+"use strict";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Bacon from "baconjs";
+import Utils from "./lib/utils.js";
+
+// import Menu from "./components/Menu.jsx";
+import WindowCollection from "./components/WindowCollection.jsx";
+
 
 // drag n drop stuff
 // other options https://news.ycombinator.com/item?id=15368104
 // https://github.com/Shopify/draggable
 // http://react-dnd.github.io/react-dnd/
 // https://bevacqua.github.io/dragula/ <- might be the best one.
+// positioning http://tether.io/
 
-"use strict";
-let Bacon = require("baconjs");
-const Utils = require("./lib/utils.js");
 
 const KEYS = {
   GROUP: {
@@ -53,7 +59,7 @@ function setDevStatus() {
 
   chrome.management.getSelf(info => {
     if(info.installType == "development"){
-      statusElement.innerText = "( " + info.installType + " )";
+      statusElement.innerText = "( " + info.installType + "-" + document.URL + " )";
     }
   });
 }
@@ -80,6 +86,11 @@ function updateTabList() {
     let sortType = groupbyDomainElement.checked ? "domain": "window";
     let groups = Utils.groupTabs(tabs, sortType);
     let windowTabs = Utils.sortByDomain(sortByDomainValue, groups);
+
+    // console.log(windowTabs);
+
+    ReactDOM.render(<WindowCollection windowdata={windowTabs}/>, document.getElementById("reacttest"));
+
 
     //display a nice sequential number on the tab.
     var windowDisplayNum = 0;

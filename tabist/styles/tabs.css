@@ -23,7 +23,7 @@ h2 {
   /* margin-bottom: 1.5em; */
 }
 
-.container div ul li a {
+.container div ul li a, .links {
 	color: #444 !important;
 }
 

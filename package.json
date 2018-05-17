@@ -7,12 +7,15 @@
     "baconjs": "^0.7.85",
     "gulp": "^3.9.1",
     "react": "^16.3.1",
+    "react-dom": "^16.3.1",
+    "underscore": "^1.9.0",
     "webpack": "^4.5.0"
   },
   "devDependencies": {
-    "babel-core": "^6.26.0",
+    "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
     "baconjs": "^0.7.87",
     "css-loader": "^0.25.0",
     "style-loader": "^0.13.1",
