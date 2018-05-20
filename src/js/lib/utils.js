@@ -65,10 +65,10 @@ let  Utils = {
 
     // each tab
     tabs.forEach( (audibleTab) => {
-      ul = document.createElement("ul");
+      let ul = document.createElement("ul");
       returnval.appendChild(ul);
 
-      for(let tab of tabs) {
+      for(let tab of audibleTabs) {
         var link = Utils.makeLink(tab);
         var li = document.createElement("li");
 
@@ -95,9 +95,16 @@ let  Utils = {
     return 0;
   },
 
-  // Sorts a Map of window_ids with an array of tabs as the values by the domain of the url.
-  // input Map {window_ids => [tab]+}
-  // returns Map {window_ids => [sorted_tabs]}
+  isNumeric(value) {
+    return !isNaN(value - parseFloat(value));
+  },
+
+/**
+ * Sorts a Map of window_ids with an array of tabs as the values by the domain of the url.
+ * @param {Boolean} sortByDoemainValue - Parameter description.
+ * @param {Map} windows - input Map {window_ids => [tab]+}
+ * @returns {Map<String,Array>} returns Map {window_ids => [sorted_tabs]}
+ */
   sortByDomain(sortByDomainValue, windows) {
     if(sortByDomainValue){
       let sortedWindows = new Map();

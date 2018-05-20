@@ -68,74 +68,32 @@ function setDevStatus() {
 // Main update routine
 // ======================================
 function updateTabList() {
+  let tabs = getTabs();
+  tabs.then(({windowTabs, audibleTabs, start, end}) => {
+    let window = (<WindowCollection
+                  windowdata={windowTabs}
+                  audibleTabs={audibleTabs}
+                  opts={options} start={start} end={end} />);
+
+    ReactDOM.render(window,
+                    document.getElementById("reacttest"));
+  });
+}
+
+function getTabs() {
   var start = Date.now();
-  var tabList = document.createElement("div");
 
-  var ul = null;
-
-  //loop through the audible tabs
-  chrome.tabs.query({}, function(tabs){
+  return browser.tabs.query({}).then((tabs) => {
     let audibleTabs = tabs.filter(tab => tab.audible);
-
-    if (audibleTabs.length > 0) {
-      let audibleElement = Utils.createAudibleElement(audibleTabs);
-      tabList.appendChild(audibleElement);
-    }
 
     // //loop through the tabs and group them by windows for display
     let sortType = groupbyDomainElement.checked ? "domain": "window";
     let groups = Utils.groupTabs(tabs, sortType);
     let windowTabs = Utils.sortByDomain(sortByDomainValue, groups);
 
-    // console.log(windowTabs);
-
-    ReactDOM.render(<WindowCollection windowdata={windowTabs}/>, document.getElementById("reacttest"));
-
-
-    //display a nice sequential number on the tab.
-    var windowDisplayNum = 0;
-    for(let [domain, tabs] of windowTabs) {
-      windowDisplayNum++;
-      //insert a new window header and change the ul
-      ul = document.createElement("ul");
-      let windowTitle = document.createElement("h2");
-      if (sortType == "domain") {
-        let domainName = domain == "Misc" ? "Misc." : new URL(tabs[0].url).hostname;
-        windowTitle.innerText = domainName.replace("www.", "");
-      } else {
-        windowTitle.innerText = "Window " + windowDisplayNum;
-      }
-
-      tabList.appendChild(windowTitle);
-      tabList.appendChild(ul);
-
-      for(let tab of tabs) {
-        let li = document.createElement("li");
-        let link = Utils.makeLink(tab, clickHandler);
-        li.appendChild(link);
-        ul.appendChild(li);
-      }
-    }
-
-    var tabCountDiv = document.createElement("div");
-    var statisticsText = "<h2>Total Windows: " + windowDisplayNum + "</h2>";
-    statisticsText += "<h2>Total Tabs: " + tabs.length + "</h2>";
-    statisticsText += "<h2>Average Tabs Per Window: " + (tabs.length/windowDisplayNum).toFixed(2) + "</h2>";
-    tabCountDiv.innerHTML = statisticsText;
-
-    tabList.appendChild(tabCountDiv);
     let end = Date.now();
-    let extime = end - start;
-    let execTimeDiv = document.createElement("div");
-    execTimeDiv.innerHTML = "<h4>Created In: " + extime + "ms</h4>";
 
-    tabList.appendChild(execTimeDiv);
-    setVersion();
-    setDevStatus();
-
-    var maindiv = document.getElementById("content");
-    maindiv.innerHTML = "";
-    maindiv.appendChild(tabList);
+    return {windowTabs, audibleTabs, start, end};
   });
 }
 
@@ -144,11 +102,12 @@ function updateTabList() {
 // autoRefresh: Refresh the tabist page automatically as events come in
 // newtab: Replace your new tab page with tabist (probably not able to do this in firefox)
 function getOptions() {
-  chrome.storage.local.get(["closeTab", "pinTab", "autoRefresh", "newtab"], res => {
+  return browser.storage.local.get(["closeTab", "pinTab", "autoRefresh", "newtab"]).then( res => {
     options.closetab = res.closeTab || (res.closeTab == "undefined"); // default true
     options.pintab = res.pinTab || false;
     options.autorefresh = res.autoRefresh || (res.autoRefresh == "undefined"); // default true
     options.newtab = res.newTab || false;
+    return options;
   });
 }
 
@@ -226,3 +185,5 @@ updateGroupByPreferences();
 getOptions();
 hideShowOptionsPanel();
 
+setVersion();
+setDevStatus();
