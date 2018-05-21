@@ -52,9 +52,6 @@ class Link extends Component {
     let p1 = browser.tabs.update(this.props.tabData.id, {active: true});
     let p2 = browser.windows.update(this.props.tabData.windowId, {focused: true});
 
-    console.log("tabdata", this.props.tabData);
-    console.log("windowid", this.props.tabData.windowId);
-
     Promise.all([p1, p2]).then(() => {
       if (this.options != "undefined" && this.options.closetab) {
         chrome.tabs.getCurrent(tab => {
