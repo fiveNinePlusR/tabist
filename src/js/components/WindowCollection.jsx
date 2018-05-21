@@ -3,12 +3,8 @@ import Utils from '../lib/utils';
 // import _ from 'underscore';
 
 class WindowCollection extends Component{
-  render(){
-    console.log("hi");
-    console.log("windowdata:", this.props.windowdata);
-    // new Map([…map].map(([key, value]) => newEntry))
-    // let mymap = _.map(this.props.windowdata.keys(), (k) => {console.log(k)});
 
+  render(){
     let windows = this.props.windowdata;
     let renderedWindows = Array.from(windows.keys()).map((window, index) => {
       return <Window title={window} index={index + 1} id={window} tabs={windows.get(window)} options={this.props.options} />;
@@ -55,8 +51,7 @@ class Link extends Component {
     Promise.all([p1, p2]).then(() => {
       if (this.options != "undefined" && this.options.closetab) {
         chrome.tabs.getCurrent(tab => {
-          // chrome.tabs.remove(tab.id);
-          console.log("inside promise");
+          chrome.tabs.remove(tab.id);
         });
       }
     });
