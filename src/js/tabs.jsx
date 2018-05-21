@@ -32,48 +32,18 @@ var sortByDomainValue = false;
 var version = null;
 var options = {};
 
-function clickHandler() {
-  if (options.closetab) {
-    chrome.tabs.getCurrent(tab => {
-      chrome.tabs.remove(tab.id);
-    });
-  }
-
-  chrome.tabs.update(this.tabId, {active: true});
-  chrome.windows.update(this.windowId, {focused: true});
-  return false;
-}
-
-function setVersion() {
-  var versionElement = document.getElementById("version");
-  if (!version ) {
-    var manifest = version || chrome.runtime.getManifest();
-    version = version || manifest.version;
-  }
-
-  versionElement.innerText = "Tabist (" + version + ")";
-}
-
-function setDevStatus() {
-  var statusElement = document.getElementById("developmentStatus");
-
-  chrome.management.getSelf(info => {
-    if(info.installType == "development"){
-      statusElement.innerText = "( " + info.installType + "-" + document.URL + " )";
-    }
-  });
-}
-
 // ======================================
 // Main update routine
 // ======================================
 function updateTabList() {
   let tabs = getTabs();
-  tabs.then(({windowTabs, audibleTabs, start, end}) => {
+  let opts = getOptions();
+  Promise.all([tabs, opts]).then(([{windowTabs, audibleTabs, start, end}, options]) => {
+    console.log(options);
     let window = (<WindowCollection
                   windowdata={windowTabs}
                   audibleTabs={audibleTabs}
-                  opts={options} start={start} end={end} />);
+                  options={options} start={start} end={end} />);
 
     ReactDOM.render(window,
                     document.getElementById("reacttest"));
@@ -164,7 +134,6 @@ chrome.storage.onChanged.addListener( () => { storageChangedBus.push("Storage Ch
 
 storageChangedBusThrottled.onValue( () => {
   updateGroupByPreferences();
-  bus.push("groupByChanged");
 });
 
 var refreshButton = document.getElementById("refresh_link");
@@ -185,5 +154,24 @@ updateGroupByPreferences();
 getOptions();
 hideShowOptionsPanel();
 
+function setVersion() {
+  var versionElement = document.getElementById("version");
+  if (!version ) {
+    var manifest = version || chrome.runtime.getManifest();
+    version = version || manifest.version;
+  }
+
+  versionElement.innerText = "Tabist (" + version + ")";
+}
 setVersion();
+
+function setDevStatus() {
+  var statusElement = document.getElementById("developmentStatus");
+
+  chrome.management.getSelf(info => {
+    if(info.installType == "development"){
+      statusElement.innerText = "( " + info.installType + "-" + document.URL + " )";
+    }
+  });
+}
 setDevStatus();

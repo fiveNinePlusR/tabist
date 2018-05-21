@@ -11,11 +11,12 @@ class WindowCollection extends Component{
 
     let windows = this.props.windowdata;
     let renderedWindows = Array.from(windows.keys()).map((window, index) => {
-      return <Window title={window} index={index + 1} id={window} tabs={windows.get(window)} options={this.props.opts} />;
+      return <Window title={window} index={index + 1} id={window} tabs={windows.get(window)} options={this.props.options} />;
     });
 
-    let audible = <Window title={"Audible Tabs"} id="audible" tabs={this.props.audibleTabs} options={this.props.opts}/>;
-    let footer = <Footer start={this.props.start} end={this.props.end}/>;
+
+    let audible = <Window title={"Audible Tabs"} id="audible" tabs={this.props.audibleTabs} options={this.props.options}/>;
+    let footer = <Footer start={this.props.start} end={this.props.end} totalNumberWindows={1} totalTabs={2}/>;
     return (<div>
             {audible}
             {renderedWindows}
@@ -28,11 +29,10 @@ class WindowCollection extends Component{
 class Window extends Component {
   render(){
     let links = this.props.tabs.map((tab) => {
-      return <Link tabData={tab} opts={this.props.opts} />;
+      return <Link tabData={tab} options={this.props.options} />;
     });
     if (links.length <= 0) { return null; }
 
-    // console.log("tab", this.props.tabs);
     let title = this.props.title;
     let displayTitle = Utils.isNumeric(title) ? `Window ${this.props.index}`: title;
 
@@ -49,22 +49,28 @@ class Window extends Component {
 
 class Link extends Component {
   clickHandler(){
-    // console.log(this);
-    // if (this.opts.closetab) {
-    //   chrome.tabs.getCurrent(tab => {
-    //     chrome.tabs.remove(tab.id);
-    //   });
-    // }
+    let p1 = browser.tabs.update(this.props.tabData.id, {active: true});
+    let p2 = browser.windows.update(this.props.tabData.windowId, {focused: true});
 
-    chrome.tabs.update(this.props.tabData.tabId, {active: true});
-    chrome.windows.update(this.props.tabData.windowId, {focused: true});
+    console.log("tabdata", this.props.tabData);
+    console.log("windowid", this.props.tabData.windowId);
+
+    Promise.all([p1, p2]).then(() => {
+      if (this.options != "undefined" && this.options.closetab) {
+        chrome.tabs.getCurrent(tab => {
+          // chrome.tabs.remove(tab.id);
+          console.log("inside promise");
+        });
+      }
+    });
+
     return false;
   }
 
   render(){
     let tab = this.props.tabData;
     var linkText = tab.title || tab.url;
-    this.opts = this.props.opts;
+    this.options = this.props.options;
 
     return (
       <li>
