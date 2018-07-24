@@ -48,7 +48,7 @@ class Link extends Component {
     let p2 = browser.windows.update(this.props.tabData.windowId, {focused: true});
 
     Promise.all([p1, p2]).then(() => {
-      if (this.options != "undefined" && this.options.closetab) {
+      if (this.props.options != "undefined" && this.props.options.closetab) {
         chrome.tabs.getCurrent(tab => {
           chrome.tabs.remove(tab.id);
         });
