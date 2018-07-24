@@ -62,7 +62,7 @@ function getTabs() {
     let groups = Utils.groupTabs(tabs, sortType);
     let windowTabs = Utils.sortByDomain(sortByDomainValue, groups);
     let tabcount = tabs.length;
-    let windowcount = windowTabs.length;
+    let windowcount = windowTabs.size;
 
     let end = Date.now();
 
