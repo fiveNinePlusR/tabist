@@ -7,12 +7,11 @@ class WindowCollection extends Component{
   render(){
     let windows = this.props.windowdata;
     let renderedWindows = Array.from(windows.keys()).map((window, index) => {
-      return <Window title={window} index={index + 1} id={window} tabs={windows.get(window)} options={this.props.options} />;
+      return <Window key={window} title={window} index={index + 1} id={window} tabs={windows.get(window)} options={this.props.options} />;
     });
 
-
     let audible = <Window title={"Audible Tabs"} id="audible" tabs={this.props.audibleTabs} options={this.props.options}/>;
-    let footer = <Footer start={this.props.start} end={this.props.end} totalNumberWindows={1} totalTabs={2}/>;
+    let footer = <Footer start={this.props.start} end={this.props.end} totalNumberWindows={this.props.windowcount} totalTabs={this.props.tabcount}/>;
     return (<div>
             {audible}
             {renderedWindows}
@@ -25,7 +24,7 @@ class WindowCollection extends Component{
 class Window extends Component {
   render(){
     let links = this.props.tabs.map((tab) => {
-      return <Link tabData={tab} options={this.props.options} />;
+      return <Link key={tab.id} tabData={tab} options={this.props.options} />;
     });
     if (links.length <= 0) { return null; }
 
@@ -83,12 +82,16 @@ class Footer extends Component {
 
   render(){
     let exeTime = this.props.end - this.props.start;
+    let wins = this.props.totalNumberWindows;
+    let tabs = this.props.totalTabs;
+    let avgTabs = tabs / (wins + 0.0);
+
 
     return (
       <div>
-        <h2>Total Windows: </h2>
-        <h2>Total Tabs: </h2>
-        <h2>Average Tabs Per Window: </h2>
+        <h2>Total Windows: {wins}</h2>
+        <h2>Total Tabs: {tabs}</h2>
+        <h2>Average Tabs Per Window: {avgTabs.toFixed(2)}</h2>
         <h4>Created In: {exeTime}ms</h4>
       </div>
     );

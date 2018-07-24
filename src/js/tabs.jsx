@@ -38,11 +38,12 @@ var options = {};
 function updateTabList() {
   let tabs = getTabs();
   let opts = getOptions();
-  Promise.all([tabs, opts]).then(([{windowTabs, audibleTabs, start, end}, options]) => {
-    console.log(options);
+  Promise.all([tabs, opts]).then(([{windowTabs, audibleTabs, windowcount, tabcount, start, end}, options]) => {
     let window = (<WindowCollection
                   windowdata={windowTabs}
                   audibleTabs={audibleTabs}
+                  windowcount={windowcount}
+                  tabcount={tabcount}
                   options={options} start={start} end={end} />);
 
     ReactDOM.render(window,
@@ -60,10 +61,12 @@ function getTabs() {
     let sortType = groupbyDomainElement.checked ? "domain": "window";
     let groups = Utils.groupTabs(tabs, sortType);
     let windowTabs = Utils.sortByDomain(sortByDomainValue, groups);
+    let tabcount = tabs.length;
+    let windowcount = windowTabs.length;
 
     let end = Date.now();
 
-    return {windowTabs, audibleTabs, start, end};
+    return {windowTabs, audibleTabs, tabcount, windowcount, start, end};
   });
 }
 
@@ -116,6 +119,7 @@ var groupbyPressed = Bacon.mergeAll(groupbyNormal, groupbyDomain);
 groupbyPressed.onValue( target => {
   let gbdomain = target.currentTarget.id == "gb_domain";
   chrome.storage.local.set({[KEYS.GROUP.DOMAIN]: gbdomain});
+  updateTabList();
 });
 
 function updateGroupByPreferences() {
