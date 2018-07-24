@@ -26,7 +26,8 @@
   "sidebar_action": {
     "default_icon": "icons/page-32_white.png",
     "default_title" : "Tabist",
-    "default_panel": "tabs.html"
+    "default_panel": "tabs.html",
+    "open_at_install": false
   },
 
   "commands": {
