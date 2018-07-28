@@ -54,32 +54,6 @@ let  Utils = {
     return returnValue;
   },
 
-  // Creates the audible elements division at the top of the page.
-  createAudibleElement(tabs) {
-    let returnval = document.createElement("div");
-
-    // section title
-    var AudibleTitle = document.createElement("h2");
-    AudibleTitle.innerText = "Audible Tabs";
-    returnval.appendChild(AudibleTitle);
-
-    // each tab
-    tabs.forEach( (audibleTab) => {
-      let ul = document.createElement("ul");
-      returnval.appendChild(ul);
-
-      for(let tab of audibleTabs) {
-        var link = Utils.makeLink(tab);
-        var li = document.createElement("li");
-
-        li.appendChild(link);
-        ul.appendChild(li);
-      }
-    });
-
-    return returnval;
-  },
-
   lexSort(l,r) {
     let left = new URL(l.url);
     let right = new URL(r.url);
@@ -99,12 +73,12 @@ let  Utils = {
     return !isNaN(value - parseFloat(value));
   },
 
-/**
- * Sorts a Map of window_ids with an array of tabs as the values by the domain of the url.
- * @param {Boolean} sortByDoemainValue - Parameter description.
- * @param {Map} windows - input Map {window_ids => [tab]+}
- * @returns {Map<String,Array>} returns Map {window_ids => [sorted_tabs]}
- */
+  /**
+   * Sorts a Map of window_ids with an array of tabs as the values by the domain of the url.
+   * @param {Boolean} sortByDoemainValue - Parameter description.
+   * @param {Map} windows - input Map {window_ids => [tab]+}
+   * @returns {Map<String,Array>} returns Map {window_ids => [sorted_tabs]}
+   */
   sortByDomain(sortByDomainValue, windows) {
     if(sortByDomainValue){
       let sortedWindows = new Map();
@@ -118,25 +92,7 @@ let  Utils = {
     return windows;
   },
 
-  // Returns a link object for a tab with click handlers set
-  makeLink(tab, clickHandler) {
-    var link = document.createElement("a");
-    link.href = "#";
-    link.onclick = clickHandler;
-    link.tabId = tab.id;
-    link.windowId = tab.windowId;
-
-    var linkText = tab.title || tab.url;
-    var isActive = tab.active ? " <span style='color:darkred'> &raquo; (Selected)</span> " : "" ;
-
-    var audibleText = tab.audible ? "&#x1f508; " : "";
-    var favicon = tab.favIconUrl ? "<img src='" + tab.favIconUrl + "' width='24' height='24'/><span>&nbsp;</span>": "";
-    link.innerHTML = favicon + audibleText + linkText + isActive;
-
-    return link;
-  },
-
-  // returns an array of tabs for a set of tabs 
+  // returns an array of tabs for a set of tabs
   // input [tabs]
   // returns [urls]
   getLinksFromTabs(tabs) {
