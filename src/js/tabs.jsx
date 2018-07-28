@@ -31,6 +31,7 @@ const KEYS = {
 var sortByDomainValue = false;
 var version = null;
 var options = {};
+function log(s) { console.log(s); }
 
 // ======================================
 // Main update routine
@@ -54,8 +55,11 @@ function updateTabList() {
 function getTabs() {
   var start = Date.now();
 
+  log("get tabs running");
+
   return browser.tabs.query({}).then((tabs) => {
     let audibleTabs = tabs.filter(tab => tab.audible);
+    log(tabs);
 
     // //loop through the tabs and group them by windows for display
     let sortType = groupbyDomainElement.checked ? "domain": "window";
@@ -117,6 +121,7 @@ var groupbyDomain = Bacon.fromEvent(groupbyDomainElement, "click");
 var groupbyPressed = Bacon.mergeAll(groupbyNormal, groupbyDomain);
 
 groupbyPressed.onValue( target => {
+  log("group by pressed");
   let gbdomain = target.currentTarget.id == "gb_domain";
   chrome.storage.local.set({[KEYS.GROUP.DOMAIN]: gbdomain});
   updateTabList();
@@ -137,6 +142,7 @@ var storageChangedBusThrottled = storageChangedBus.debounce(1000);
 chrome.storage.onChanged.addListener( () => { storageChangedBus.push("Storage Changed"); });
 
 storageChangedBusThrottled.onValue( () => {
+  log("storage changed");
   updateGroupByPreferences();
 });
 
@@ -148,7 +154,7 @@ optionsButton.addEventListener('click', () => { hideShowOptionsPanel(); }, false
 
 function hideShowOptionsPanel() {
   var optionsPanel = document.getElementById("controls");
-  // console.log(optionsPanel);
+  // log(optionsPanel);
   optionsPanel.hidden = !optionsPanel.hidden;
   optionsButton.innerText = optionsPanel.hidden ? "Show Options" : "Hide Options";
 };
