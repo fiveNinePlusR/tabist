@@ -31,6 +31,9 @@ const KEYS = {
 var sortByDomainValue = false;
 var version = null;
 var options = {};
+var refreshcount = 0;
+var refreshcountElement = document.getElementById("refreshcount");
+
 function log(s) { console.log(s); }
 
 // ======================================
@@ -50,7 +53,10 @@ function updateTabList() {
     ReactDOM.render(window,
                     document.getElementById("reacttest"));
   });
+  refreshcount += 1;
+  refreshcountElement.innerText = `Refresh Count: ${refreshcount}`;
 }
+
 
 function getTabs() {
   var start = Date.now();
