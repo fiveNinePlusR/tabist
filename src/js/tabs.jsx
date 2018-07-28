@@ -96,11 +96,9 @@ chrome.tabs.onRemoved.addListener( () => {
   bus.push("onRemoved");
 });
 
-//moved inside a window
 chrome.tabs.onMoved.addListener( () => { bus.push("onMoved"); });
-
-//moved between windows
 chrome.tabs.onAttached.addListener( () => { bus.push("onAttached"); });
+chrome.tabs.onActivated.addListener( () => { bus.push("onActivated"); });
 
 chrome.tabs.onUpdated.addListener( (tabId) => {
   chrome.tabs.get(tabId, tab => {
@@ -113,6 +111,10 @@ chrome.tabs.onUpdated.addListener( (tabId) => {
 var throttledBus = bus.debounce(500);
 //subscribe to the debounced bus.
 throttledBus.onValue( () => { if (options.autorefresh) { updateTabList(); }});
+
+//-------------------------------------------------------------------
+//options handling
+//-------------------------------------------------------------------
 var groupbyNormalElement = document.getElementById("gb_window");
 var groupbyDomainElement = document.getElementById("gb_domain");
 
