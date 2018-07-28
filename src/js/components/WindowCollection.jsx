@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import Utils from '../lib/utils';
-// import _ from 'underscore';
+import _ from 'underscore';
 
 class WindowCollection extends Component{
 
@@ -33,12 +33,31 @@ class Window extends Component {
 
     return (
       <div>
-        <h2> {displayTitle} </h2>
+        <h2> {displayTitle} <CloseWindowButton windowid={this.props.windowid} /> </h2>
         <ul>
           {links}
         </ul>
       </div>
     );
+  }
+}
+
+class CloseWindowButton extends Component {
+  closeHandler() {
+    browser.windows.remove(this.props.windowid);
+  }
+  render() {
+    return null;
+    // return <span style={{color:"darkred", verticalAlign: "center", fontSize: "0.7em"}} onClick={this.closeHandler.bind(this)}>(X)</span>;
+  }
+}
+
+class CloseTabButton extends Component {
+  closeHandler() {
+    browser.tabs.remove(this.props.tabid);
+  }
+  render() {
+    return <span style={{color:"darkred", verticalAlign: "center"}} onClick={this.closeHandler.bind(this)}>(X)</span>;
   }
 }
 
@@ -73,6 +92,7 @@ class Link extends Component {
           {linkText}
           {active(tab.active)}
         </a>
+        <span>&nbsp;</span><CloseTabButton tabid={tab.id}/>
       </li>
     );
   }
