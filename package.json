@@ -4,24 +4,23 @@
   "description": "Simple Tab Switcher",
   "main": " ",
   "dependencies": {
-    "baconjs": "^0.7.85",
     "gulp": "^3.9.1",
-    "react": "^16.3.1",
-    "react-dom": "^16.3.1",
-    "underscore": "^1.9.0",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "underscore": "^1.9.1",
     "webextension-polyfill": "^0.2.1",
-    "webpack": "^4.5.0"
+    "webpack": "^4.17.1"
   },
   "devDependencies": {
-    "@types/underscore": "^1.8.8",
+    "@types/underscore": "^1.8.9",
     "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.4",
+    "babel-loader": "^7.1.5",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
-    "baconjs": "^0.7.87",
+    "baconjs": "^0.7.95",
     "css-loader": "^0.25.0",
-    "style-loader": "^0.13.1",
-    "webpack-cli": "^2.0.14"
+    "style-loader": "^0.13.2",
+    "webpack-cli": "^2.1.5"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
