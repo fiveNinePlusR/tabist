@@ -2,8 +2,8 @@
 
     "description": "Quick Tab Switcher",
     "manifest_version": 2,
-    "name": "Tabist",
-    "version": "0.1.7",
+    "name": "Tabist Private",
+    "version": "0.1.8",
     "homepage_url": "https://github.com/fiveNinePlusR/tabist",
     "icons": {
         "48": "icons/page-48_white.png"
