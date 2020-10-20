@@ -1,37 +1,68 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import Utils from '../lib/utils';
 import _ from 'underscore';
 
-class WindowCollection extends Component{
 
-  render(){
+class WindowCollection extends Component {
+
+  onDragEnd = result => {
+    console.log(result);
+  };
+
+  render() {
     let windows = this.props.windowdata;
     let renderedWindows = Array.from(windows.keys()).map((window, index) => {
-      return <Window key={window} title={window} index={index + 1} id={window} tabs={windows.get(window)} options={this.props.options} />;
+      return (
+        <Droppable droppableId={window} >
+          {(provided, snapshot) => (
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              <Window
+                key={window}
+                title={window}
+                index={index + 1}
+                id={window}
+                tabs={windows.get(window)}
+                options={this.props.options}
+                innerRef={provided.innerRef} />
+
+                {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      )
     });
 
-    let audible = <Window title={"Audible Tabs"} id="audible" tabs={this.props.audibleTabs} options={this.props.options}/>;
-    let footer = <Footer start={this.props.start} end={this.props.end} totalNumberWindows={this.props.windowcount} totalTabs={this.props.tabcount}/>;
-    return (<div>
-            {audible}
-            {renderedWindows}
-            {footer}
-            </div>
-           );
-  }
+    let audible = <Window title={"Audible Tabs"} id="audible" tabs={this.props.audibleTabs} options={this.props.options} />;
+    let footer = <Footer start={this.props.start} end={this.props.end} totalNumberWindows={this.props.windowcount} totalTabs={this.props.tabcount} />;
+
+    return (
+      <DragDropContext onDragEnd={this.onDragEnd}>
+        <div>
+          {audible}
+          {renderedWindows}
+          {footer}
+        </div>
+      </DragDropContext>
+    );
+  };
 }
 
 class Window extends Component {
-  render(){
+  render() {
     let links = this.props.tabs.map((tab) => {
       return <Link key={tab.id} tabData={tab} options={this.props.options} />;
     });
     if (links.length <= 0) { return null; }
 
     let title = this.props.title;
-    let displayTitle = Utils.isNumeric(title) ? `Window ${this.props.index}`: title;
+    let displayTitle = Utils.isNumeric(title) ? `Window ${this.props.index}` : title;
 
     return (
+
       <div>
         <h2> {displayTitle} <CloseWindowButton windowid={this.props.windowid} /> </h2>
         <ul>
@@ -57,14 +88,14 @@ class CloseTabButton extends Component {
     browser.tabs.remove(this.props.tabid);
   }
   render() {
-    return <span style={{color:"darkred", verticalAlign: "center"}} onClick={this.closeHandler.bind(this)}>(X)</span>;
+    return <span style={{ color: "darkred", verticalAlign: "center" }} onClick={this.closeHandler.bind(this)}>(X)</span>;
   }
 }
 
 class Link extends Component {
-  clickHandler(){
-    let p1 = browser.tabs.update(this.props.tabData.id, {active: true});
-    let p2 = browser.windows.update(this.props.tabData.windowId, {focused: true});
+  clickHandler() {
+    let p1 = browser.tabs.update(this.props.tabData.id, { active: true });
+    let p2 = browser.windows.update(this.props.tabData.windowId, { focused: true });
 
     Promise.all([p1, p2]).then(() => {
       if (this.props.options != "undefined" && this.props.options.closetab) {
@@ -77,30 +108,39 @@ class Link extends Component {
     return false;
   }
 
-  render(){
+  render() {
+    console.log(tab);
     let tab = this.props.tabData;
     var linkText = tab.title || tab.url;
     this.options = this.props.options;
 
     return (
-      <li>
-        <a href="#"
-           className="links"
-           onClick={this.clickHandler.bind(this)}>
-          {favicon(tab.favIconUrl)}
-          {audible(tab.audible)}
-          {linkText}
-          {active(tab.active)}
-        </a>
-        <span>&nbsp;</span><CloseTabButton tabid={tab.id}/>
-      </li>
+      <Draggable draggableId={`draggable-${tab.id}`} index={tab.index} >
+        {(provided, snapshot) => (
+          <li
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+          >
+            <a href="#"
+              className="links"
+              onClick={this.clickHandler.bind(this)}>
+              {favicon(tab.favIconUrl)}
+              {audible(tab.audible)}
+              {linkText}
+              {active(tab.active)}
+            </a>
+            <span>&nbsp;</span><CloseTabButton tabid={tab.id} />
+          </li>
+        )};
+      </Draggable >
     );
   }
 }
 
 class Footer extends Component {
 
-  render(){
+  render() {
     let exeTime = this.props.end - this.props.start;
     let wins = this.props.totalNumberWindows;
     let tabs = this.props.totalTabs;
@@ -118,19 +158,19 @@ class Footer extends Component {
   }
 }
 
-function active(isActive){
+function active(isActive) {
   if (!isActive) { return null; }
 
-  return <span style={{color: "darkred"}}> &raquo; (Selected)</span>;
+  return <span style={{ color: "darkred" }}> &raquo; (Selected)</span>;
 }
 
-function favicon(iconurl){
+function favicon(iconurl) {
   if (!iconurl) { return null; }
 
-  return <span><img src={iconurl} width='24' height='24'/><span>&nbsp;</span></span>;
+  return <span><img src={iconurl} width='24' height='24' /><span>&nbsp;</span></span>;
 }
 
-function audible(audible){
+function audible(audible) {
   if (!audible) { return null; }
 
   return <span>&#x1f508;</span>;
