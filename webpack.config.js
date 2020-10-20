@@ -1,4 +1,5 @@
-const path = require('path');
+/* eslint-disable no-undef */
+const path = require("path");
 
 // can also use an array of configurations [{}, ..., {}]
 module.exports = {
@@ -24,18 +25,18 @@ module.exports = {
     rules: [
       {
         test: /\.css$/,
-        use: [ 'style-loader', 'css-loader' ]
+        use: [ "style-loader", "css-loader" ]
       },
       {
         test: /\.(js|jsx)$/,
         exclude: /(node_modules|bower_components)/,
-        loader: 'babel-loader',
-        options: { presets: ['env']}
+        loader: "babel-loader",
+        options: { presets: ["env"]}
       }
     ]
   },
 
-  resolve: { extensions: ['*', '.js', '.jsx'] },
+  resolve: { extensions: ["*", ".js", ".jsx"] },
 
 };
 
