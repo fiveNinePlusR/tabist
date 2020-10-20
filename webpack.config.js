@@ -7,9 +7,11 @@ module.exports = {
   // devtool: "nosources-source-map", // enables stack traces but disables sources
   devtool: "source-map", // enables stack traces but disables sources
 
+  context: path.resolve(__dirname),
+
   entry: {
-    tabs: "./src/js/tabs.jsx",
-    options: "./src/js/options.js"
+    tabs: "./src/js/tabs",
+    options: "./src/js/options"
   },
 
   output: {
