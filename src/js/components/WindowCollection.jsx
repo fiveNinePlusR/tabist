@@ -7,14 +7,34 @@ import _ from 'underscore';
 class WindowCollection extends Component {
 
   onDragEnd = result => {
-    console.log(result);
+    console.log("drag ended", result);
+    var dest = result.destination.droppableId;
+    dest = parseInt(dest.replace("windownum-", ""), 10);
+    var destIndex = parseInt(result.destination.index, 10);
+
+    var {droppableId, index} = result.source;
+    var src = droppableId.replace("windownum-", "");
+
+    browser.tabs.query({windowId: parseInt(src, 10)}).then( r => {
+      var tab = r.find(item => item.index == index);
+      console.log("tab", tab);
+      console.log("src", r);
+      console.log("moving:", tab.id, `to window: ${dest} index: ${destIndex}`)
+      browser.tabs.move(tab.id, {windowId: dest, index: destIndex}).then( result => {
+        console.log("finished moving tab");
+        this.props.updateList();
+      })
+    });
+    browser.tabs.query({windowId: parseInt(dest, 10)}).then( r => {console.log("dest", r)});
+    // browser.tabs.move()
   };
 
   render() {
     let windows = this.props.windowdata;
     let renderedWindows = Array.from(windows.keys()).map((window, index) => {
+      console.log("window", window)
       return (
-        <Droppable droppableId={window} >
+        <Droppable droppableId={`windownum-${window}`} >
           {(provided, snapshot) => (
             <div
               ref={provided.innerRef}
@@ -27,7 +47,9 @@ class WindowCollection extends Component {
                 id={window}
                 tabs={windows.get(window)}
                 options={this.props.options}
-                innerRef={provided.innerRef} />
+                // innerRef={provided.innerRef}
+                />
+
 
                 {provided.placeholder}
             </div>
@@ -36,12 +58,13 @@ class WindowCollection extends Component {
       )
     });
 
+
     let audible = <Window title={"Audible Tabs"} id="audible" tabs={this.props.audibleTabs} options={this.props.options} />;
     let footer = <Footer start={this.props.start} end={this.props.end} totalNumberWindows={this.props.windowcount} totalTabs={this.props.tabcount} />;
 
     return (
       <DragDropContext onDragEnd={this.onDragEnd}>
-        <div>
+        <div key="list">
           {audible}
           {renderedWindows}
           {footer}
@@ -97,6 +120,7 @@ class Link extends Component {
     let p1 = browser.tabs.update(this.props.tabData.id, { active: true });
     let p2 = browser.windows.update(this.props.tabData.windowId, { focused: true });
 
+
     Promise.all([p1, p2]).then(() => {
       if (this.props.options != "undefined" && this.props.options.closetab) {
         chrome.tabs.getCurrent(tab => {
@@ -109,22 +133,24 @@ class Link extends Component {
   }
 
   render() {
-    console.log(tab);
     let tab = this.props.tabData;
+    // console.log(tab);
     var linkText = tab.title || tab.url;
     this.options = this.props.options;
 
     return (
-      <Draggable draggableId={`draggable-${tab.id}`} index={tab.index} >
+      <Draggable draggableId={`draggable-tab-id-${tab.id}`} index={tab.index} >
         {(provided, snapshot) => (
           <li
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
+            key={tab.id}
           >
             <a href="#"
               className="links"
-              onClick={this.clickHandler.bind(this)}>
+              onAuxClick={this.clickHandler.bind(this)}
+              onClick={this.clickHandler.bind(this)} >
               {favicon(tab.favIconUrl)}
               {audible(tab.audible)}
               {linkText}
@@ -132,7 +158,7 @@ class Link extends Component {
             </a>
             <span>&nbsp;</span><CloseTabButton tabid={tab.id} />
           </li>
-        )};
+        )}
       </Draggable >
     );
   }
