@@ -195,3 +195,20 @@ function setDevStatus() {
   });
 }
 setDevStatus();
+
+window.addEventListener("beforeunload", function(event) {
+  // guarantee an unload
+  delete event['returnValue'];
+
+  console.log("unloading");
+  //cleanup the busses
+  storageChangedBus.dispose();
+  storageChangedBusThrottled.dispose();
+  bus.dispose();
+  throttledBus.dispose();
+  groupbyNormal.dispose();
+  groupbyDomain.dispose();
+  groupbyPressed.dispose();
+
+  console.log("unloaded");
+});
