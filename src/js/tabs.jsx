@@ -1,7 +1,7 @@
 "use strict";
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Bacon from "baconjs";
+import {Bus, fromEvent, mergeAll} from "baconjs";
 import Utils from "./lib/utils.js";
 
 // import Menu from "./components/Menu.jsx";
@@ -48,7 +48,8 @@ function updateTabList() {
                   audibleTabs={audibleTabs}
                   windowcount={windowcount}
                   tabcount={tabcount}
-                  options={options} start={start} end={end} />);
+                  options={options} start={start} end={end} updateList={updateTabList} />);
+    console.log("updating tab list");
 
     ReactDOM.render(window,
                     document.getElementById("reacttest"));
@@ -94,27 +95,29 @@ function getOptions() {
   });
 }
 
-var bus = new Bacon.Bus();
+var puts = console.log;
+var bus = new Bus();
 
-chrome.tabs.onCreated.addListener( () => { bus.push("onCreated"); });
+chrome.tabs.onActivated.addListener( () => { bus.push("onActivated"); puts("activated");});
+// chrome.tabs.onAttached.addListener( () => { bus.push("onAttached"); puts("attached"); });
+chrome.tabs.onCreated.addListener( () => { bus.push("onCreated"); puts("created"); });
+// chrome.tabs.onDetached.addListener( () => { bus.push("onDetached"); puts("detached"); });
+// chrome.tabs.onMoved.addListener( () => { bus.push("onMoved"); puts("moved"); });
 chrome.tabs.onRemoved.addListener( () => {
   window.setTimeout(() => { bus.push("onRemoved Delayed"); }, 2000); // FIXME: needed for firefox until this is resolved https://bugzilla.mozilla.org/show_bug.cgi?id=1291830
   bus.push("onRemoved");
+  puts("removed");
 });
-
-chrome.tabs.onMoved.addListener( () => { bus.push("onMoved"); });
-chrome.tabs.onAttached.addListener( () => { bus.push("onAttached"); });
-chrome.tabs.onActivated.addListener( () => { bus.push("onActivated"); });
-
 chrome.tabs.onUpdated.addListener( (tabId) => {
   chrome.tabs.get(tabId, tab => {
     if(tab.status == "complete" && tab.title != "Tabist"){
       bus.push("onUpdated");
+      puts("updated")
     }
   });
 });
 
-var throttledBus = bus.debounce(500);
+var throttledBus = bus.debounce(200);
 //subscribe to the debounced bus.
 throttledBus.onValue( () => { if (options.autorefresh) { updateTabList(); }});
 
@@ -123,10 +126,9 @@ throttledBus.onValue( () => { if (options.autorefresh) { updateTabList(); }});
 //-------------------------------------------------------------------
 var groupbyNormalElement = document.getElementById("gb_window");
 var groupbyDomainElement = document.getElementById("gb_domain");
-
-var groupbyNormal = Bacon.fromEvent(groupbyNormalElement, "click");
-var groupbyDomain = Bacon.fromEvent(groupbyDomainElement, "click");
-var groupbyPressed = Bacon.mergeAll(groupbyNormal, groupbyDomain);
+var groupbyNormal = fromEvent(groupbyNormalElement, "click");
+var groupbyDomain = fromEvent(groupbyDomainElement, "click");
+var groupbyPressed = mergeAll(groupbyNormal, groupbyDomain);
 
 groupbyPressed.onValue( target => {
   log("group by pressed");
@@ -145,7 +147,7 @@ function updateGroupByPreferences() {
   });
 }
 
-var storageChangedBus = new Bacon.Bus();
+var storageChangedBus = new Bus();
 var storageChangedBusThrottled = storageChangedBus.debounce(1000);
 chrome.storage.onChanged.addListener( () => { storageChangedBus.push("Storage Changed"); });
 
