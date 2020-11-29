@@ -116,7 +116,22 @@ class CloseTabButton extends Component {
 }
 
 class Link extends Component {
-  clickHandler() {
+  clickHandler(e) {
+    e.persist();
+    //stops the jarring page reload on click
+    e.preventDefault();
+    console.log(e);
+
+    if( e.button == 1 ) {
+      //middle click
+      console.log(this.props.tabData);
+      browser.tabs.remove(this.props.tabData.id);
+      return;
+    } else if( e.button == 2 ) {
+      //right click
+      return;
+    }
+
     let p1 = browser.tabs.update(this.props.tabData.id, { active: true });
     let p2 = browser.windows.update(this.props.tabData.windowId, { focused: true });
 
