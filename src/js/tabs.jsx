@@ -42,12 +42,15 @@ function log(s) { console.log(s); }
 function updateTabList() {
   let tabs = getTabs();
   let opts = getOptions();
-  Promise.all([tabs, opts]).then(([{windowTabs, audibleTabs, windowcount, tabcount, start, end}, options]) => {
+// {windowTabs, windowcount, tabcount, start, end, tabs}
+  Promise.all([tabs, opts]).then(([{windowTabs, tabcount, windowcount, start, end, tabs}, options]) => {
     let window = (<WindowCollection
+
                   windowdata={windowTabs}
-                  audibleTabs={audibleTabs}
+                  // audibleTabs={audibleTabs}
                   windowcount={windowcount}
                   tabcount={tabcount}
+                  tabs={tabs}
                   options={options} start={start} end={end} updateList={updateTabList} />);
     console.log("updating tab list");
 
@@ -65,8 +68,8 @@ function getTabs() {
   log("get tabs running");
 
   return browser.tabs.query({}).then((tabs) => {
-    let audibleTabs = tabs.filter(tab => tab.audible);
-    log(tabs);
+    // let audibleTabs = tabs.filter(tab => tab.audible);
+    // log(tabs);
 
     // //loop through the tabs and group them by windows for display
     let sortType = groupbyDomainElement.checked ? "domain": "window";
@@ -77,7 +80,7 @@ function getTabs() {
 
     let end = Date.now();
 
-    return {windowTabs, audibleTabs, tabcount, windowcount, start, end};
+    return {windowTabs, tabcount, windowcount, start, end, tabs};
   });
 }
 
@@ -119,7 +122,7 @@ chrome.tabs.onUpdated.addListener( (tabId) => {
 
 var throttledBus = bus.debounce(200);
 //subscribe to the debounced bus.
-throttledBus.onValue( () => { if (options.autorefresh) { updateTabList(); }});
+throttledBus.onValue( () => { if (options.autorefresh && false) { updateTabList(); }});
 
 //-------------------------------------------------------------------
 //options handling
@@ -212,3 +215,5 @@ window.addEventListener("beforeunload", function(event) {
 
   console.log("unloaded");
 });
+
+updateTabList();

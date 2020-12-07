@@ -39,12 +39,12 @@ const Link = (props) => {
   var options = props.options;
 
   return (
-    <Draggable draggableId={`draggable-tab-id-${tab.id}`} index={tab.index} >
-      {(provided, snapshot) => (
+    // <Draggable draggableId={`draggable-tab-id-${tab.id}`} index={tab.index} >
+    //   {(provided, snapshot) => (
         <li
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
+          // ref={provided.innerRef}
+          // {...provided.draggableProps}
+          // {...provided.dragHandleProps}
           key={tab.id}
         >
           <a href="#"
@@ -58,8 +58,8 @@ const Link = (props) => {
           </a>
           <span>&nbsp;</span><CloseTabButton tabid={tab.id} />
         </li>
-      )}
-    </Draggable >
+      // )}
+    // </Draggable >
   );
 
 }
