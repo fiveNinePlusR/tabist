@@ -12,7 +12,11 @@ module.exports = {
 
   entry: {
     tabs: "./src/js/tabs",
-    options: "./src/js/options"
+    options: "./src/js/options",
+    react_debugging: {
+      import: "./src/js/lib/react-debugging.js",
+      filename: "lib/js/react-debugging.js",
+    }
   },
 
   output: {
