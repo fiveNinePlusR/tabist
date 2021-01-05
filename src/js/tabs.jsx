@@ -101,24 +101,24 @@ function getOptions() {
 var puts = console.log;
 var bus = new Bus();
 
-chrome.tabs.onActivated.addListener( () => { bus.push("onActivated"); puts("activated");});
+// chrome.tabs.onActivated.addListener( () => { bus.push("onActivated"); puts("activated");});
 // chrome.tabs.onAttached.addListener( () => { bus.push("onAttached"); puts("attached"); });
-chrome.tabs.onCreated.addListener( () => { bus.push("onCreated"); puts("created"); });
+// chrome.tabs.onCreated.addListener( () => { bus.push("onCreated"); puts("created"); });
 // chrome.tabs.onDetached.addListener( () => { bus.push("onDetached"); puts("detached"); });
 // chrome.tabs.onMoved.addListener( () => { bus.push("onMoved"); puts("moved"); });
-chrome.tabs.onRemoved.addListener( () => {
-  window.setTimeout(() => { bus.push("onRemoved Delayed"); }, 2000); // FIXME: needed for firefox until this is resolved https://bugzilla.mozilla.org/show_bug.cgi?id=1291830
-  bus.push("onRemoved");
-  puts("removed");
-});
-chrome.tabs.onUpdated.addListener( (tabId) => {
-  chrome.tabs.get(tabId, tab => {
-    if(tab.status == "complete" && tab.title != "Tabist"){
-      bus.push("onUpdated");
-      puts("updated")
-    }
-  });
-});
+// chrome.tabs.onRemoved.addListener( () => {
+//   window.setTimeout(() => { bus.push("onRemoved Delayed"); }, 2000); // FIXME: needed for firefox until this is resolved https://bugzilla.mozilla.org/show_bug.cgi?id=1291830
+//   bus.push("onRemoved");
+//   puts("removed");
+// });
+// chrome.tabs.onUpdated.addListener( (tabId) => {
+//   chrome.tabs.get(tabId, tab => {
+//     if(tab.status == "complete" && tab.title != "Tabist"){
+//       bus.push("onUpdated");
+//       puts("updated")
+//     }
+//   });
+// });
 
 var throttledBus = bus.debounce(200);
 //subscribe to the debounced bus.
