@@ -3,11 +3,12 @@ module.exports = {
     "browser": true,
     "es6": true
   },
-  "extends": "eslint:recommended",
+  "plugins": ["react-hooks"],
+  "extends": ["eslint:recommended", "plugin:react-hooks/recommended"],
   "parserOptions": {
     "sourceType": "module"
   },
-  "globals":{
+  "globals": {
     "chrome": 1,
     "Bacon": 1,
     "require": 1
@@ -29,6 +30,9 @@ module.exports = {
     "semi": [
       "error",
       "always"
-    ]
+
+    ],
+    // "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
+    // "react-hooks/exhaustive-deps": "warn" // Checks effect dependencies
   }
 };
