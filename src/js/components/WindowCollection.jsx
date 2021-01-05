@@ -10,33 +10,34 @@ import Footer from './Footer';
 
 
 const WindowCollection = (props) => {
-  // let onDragEnd = result => {
-  //   console.log("drag ended", result);
-  //   var dest = result.destination.droppableId;
-  //   dest = parseInt(dest.replace("windownum-", ""), 10);
-  //   var destIndex = parseInt(result.destination.index, 10);
+  let onDragEnd = result => {
+    console.log("drag ended", result);
+    var dest = result.destination.droppableId;
+    dest = parseInt(dest.replace("windownum-", ""), 10);
+    var destIndex = parseInt(result.destination.index, 10);
 
-  //   var {droppableId, index} = result.source;
-  //   var src = droppableId.replace("windownum-", "");
+    var { droppableId, index } = result.source;
+    var src = droppableId.replace("windownum-", "");
 
-  //   browser.tabs.query({windowId: parseInt(src, 10)}).then( r => {
-  //     var tab = r.find(item => item.index == index);
-  //     console.log("tab", tab);
-  //     console.log("src", r);
-  //     console.log("moving:", tab.id, `to window: ${dest} index: ${destIndex}`)
-  //     browser.tabs.move(tab.id, {windowId: dest, index: destIndex}).then( result => {
-  //       console.log("finished moving tab");
-  //       props.updateList();
-  //     })
-  //   });
-  //   browser.tabs.query({windowId: parseInt(dest, 10)}).then( r => {console.log("dest", r)});
-  // };
+    browser.tabs.query({ windowId: parseInt(src, 10) }).then(r => {
+      var tab = r.find(item => item.index == index);
+      console.log("tab", tab);
+      console.log("src", r);
+      console.log("moving:", tab.id, `to window: ${dest} index: ${destIndex}`)
+      browser.tabs.move(tab.id, { windowId: dest, index: destIndex }).then(result => {
+        console.log("finished moving tab");
+        props.updateList();
+      })
+    });
+    browser.tabs.query({ windowId: parseInt(dest, 10) }).then(r => { console.log("dest", r) });
+  };
+
 
   let [windowlist, setWindowlist] = useState([]);
 
   // let audible = <Window title={"Audible Tabs"} id="audible" tabs={props.audibleTabs} options={props.options} />;
   const updateWindows = () => {
-    browser.windows.getAll({windowTypes: ["normal"]}).then( windows => {
+    browser.windows.getAll({ windowTypes: ["normal"] }).then(windows => {
       // console.log("windowCollection: windows", windows);
       setWindowlist(windows);
     });
@@ -46,26 +47,46 @@ const WindowCollection = (props) => {
     // console.log("from windowCollection");
     updateWindows();
 
-    chrome.windows.onRemoved.addListener( windowid => {
-      updateWindows();
-    })
-    chrome.windows.onCreated.addListener( window => {
-      updateWindows();
-    })
+    chrome.windows.onRemoved.addListener( updateWindows )
+    chrome.windows.onCreated.addListener( updateWindows )
 
+    return function cleanup() {
+    chrome.windows.onRemoved.removeListener( updateWindows )
+    chrome.windows.onCreated.removeListener( updateWindows )
+    };
   }, []);
-
 
   // console.log("windowid", props.windowid, windowlist);
   let thewindows = windowlist.map((window, index) => {
-      return <Window
-        windowid={window.id} index={index} />
+    return (
+      <Droppable droppableId={`windownum-${window}`} >
+        {(provided, snapshot) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+          >
+            <Window
+              windowid={window.id}
+              index={index}
+              key={window.id}
+            />
+
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+    );
   });
   console.log(thewindows, "thewindows");
 
   return (
-    thewindows
+    <DragDropContext onDragEnd={onDragEnd}>
+      <div key="list">
+        {thewindows}
+       </div>
+    </DragDropContext>
   );
+
   // useEffect(() => {
   //   let audibleTabs = props.tabs.filter(tab => tab.audible);
   // });
