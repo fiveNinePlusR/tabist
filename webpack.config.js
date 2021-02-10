@@ -35,11 +35,12 @@ module.exports = {
         test: /\.(js|jsx)$/,
         exclude: /(node_modules|bower_components)/,
         loader: "babel-loader",
-      }
+      },
+      { test: /\.tsx?$/, use: ["ts-loader"], exclude: /node_modules/ },
     ]
   },
 
-  resolve: { extensions: ["*", ".js", ".jsx"] },
+  resolve: { extensions: ["*", ".js", ".jsx", ".ts", ".tsx"] },
 
 };
 
