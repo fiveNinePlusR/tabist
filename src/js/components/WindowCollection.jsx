@@ -7,10 +7,11 @@ import _ from 'underscore';
 // import Utils from '../lib/utils';
 import Window from './Window';
 import Footer from './Footer';
+import { Component } from 'react';
 
 
-const WindowCollection = (props) => {
-  let onDragEnd = result => {
+class WindowCollection extends Component {
+  onDragEnd(result) {
     console.log("drag ended", result);
     var dest = result.destination.droppableId;
     dest = parseInt(dest.replace("windownum-", ""), 10);
@@ -32,60 +33,80 @@ const WindowCollection = (props) => {
     browser.tabs.query({ windowId: parseInt(dest, 10) }).then(r => { console.log("dest", r) });
   };
 
+  componentDidMount() {
+    updateWindows();
 
-  let [windowlist, setWindowlist] = useState([]);
+    chrome.windows.onRemoved.addListener(updateWindows)
+    chrome.windows.onCreated.addListener(updateWindows)
+
+    return function cleanup() {
+      chrome.windows.onRemoved.removeListener(updateWindows)
+      chrome.windows.onCreated.removeListener(updateWindows)
+    };
+  }
+
+  componentDidUpdate() {
+
+  }
+
+  // let [windowList, setwindowList] = useState([]);
 
   // let audible = <Window title={"Audible Tabs"} id="audible" tabs={props.audibleTabs} options={props.options} />;
-  const updateWindows = () => {
+  updateWindows() {
     browser.windows.getAll({ windowTypes: ["normal"] }).then(windows => {
       // console.log("windowCollection: windows", windows);
-      setWindowlist(windows);
+      // setwindowList(windows);
+      this.setState(windows)
     });
   }
 
-  useEffect(() => {
-    // console.log("from windowCollection");
-    updateWindows();
+  // useEffect(() => {
+  //   // console.log("from windowCollection");
+  //   updateWindows();
 
-    chrome.windows.onRemoved.addListener( updateWindows )
-    chrome.windows.onCreated.addListener( updateWindows )
+  //   chrome.windows.onRemoved.addListener(updateWindows)
+  //   chrome.windows.onCreated.addListener(updateWindows)
 
-    return function cleanup() {
-    chrome.windows.onRemoved.removeListener( updateWindows )
-    chrome.windows.onCreated.removeListener( updateWindows )
-    };
-  }, []);
+  //   return function cleanup() {
+  //     chrome.windows.onRemoved.removeListener(updateWindows)
+  //     chrome.windows.onCreated.removeListener(updateWindows)
+  //   };
+  // }, []);
 
-  // console.log("windowid", props.windowid, windowlist);
-  let thewindows = windowlist.map((window, index) => {
+  // console.log("windowId", props.windowId, windowList);
+  render(props) {
+    theWindows = props.windowList.map((window, index) => {
+      return (
+        <Droppable droppableId={`windownum-${window}`} >
+          {(provided, snapshot) => (
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              <Window
+                windowId={window.id}
+                index={index}
+                key={window.id}
+              />
+
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      );
+    });
+    console.log(theWindows, "thewindows");
+
     return (
-      <Droppable droppableId={`windownum-${window}`} >
-        {(provided, snapshot) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-          >
-            <Window
-              windowid={window.id}
-              index={index}
-              key={window.id}
-            />
-
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div key="list">
+          {/* {audible} */}
+          {theWindows}
+          {/* {footer} */}
+        </div>
+      </DragDropContext>
     );
-  });
-  console.log(thewindows, "thewindows");
-
-  return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <div key="list">
-        {thewindows}
-       </div>
-    </DragDropContext>
-  );
+  }
 
   // useEffect(() => {
   //   let audibleTabs = props.tabs.filter(tab => tab.audible);

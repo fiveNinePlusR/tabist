@@ -3,8 +3,42 @@ import Utils from '../lib/utils';
 import Link from './Link'
 import ErrorBoundary from './ErrorBoundary'
 
+class Window extends React.Component {
 
-const Window = (props) => {
+  constructor(props) {
+    super(props);
+
+    this.setState({windowId: props.windowId})
+
+    // this.state = {date: new Date()};
+  }
+
+  componentDidMount() {
+    this.addEventHandlers();
+  }
+
+  componentWillUnmount() {
+    this.removeEventHandlers();
+  }
+
+  render(props) {
+    let title = props.windowId;
+    let displayTitle = Utils.isNumeric(title) ? `Window ${props.index + 1}: ${props.windowId}` : title;
+    let links = windowList.map(tab => {
+      return (<Link key={tab.id} tabData={tab} options={props.options} />);
+    })
+
+    return (
+      <div>
+        <h2> {displayTitle} <CloseWindowButton windowId={props.windowId} /> </h2>
+        <ul>
+          <ErrorBoundary>
+            {links}
+          </ErrorBoundary>
+        </ul>
+      </div>
+    );
+  }
 
   // let links = props.tabs.map((tab) => {
   //   return <Link key={tab.id} tabData={tab} options={props.options} />;
@@ -14,54 +48,48 @@ const Window = (props) => {
   // let title = props.title;
   // let displayTitle = Utils.isNumeric(title) ? `Window ${props.index}` : title;
 
-  let [windowList, setWindowList] = useState([]);
-  let [tabids, settabids] = useState([]);
-  let [loaded, setLoaded] = useState(false);
-
-  const updateList = () => {
-    browser.tabs.query({ windowId: props.windowid }).then(tabs => {
-      // console.log("windowid", props.windowid, "tabs", tabs);
+  updateList = () => {
+    browser.tabs.query({ windowId: this.state.windowId }).then(tabs => {
 
       let t = tabs.map(item => item.id);
-      // console.log(t);
-      settabids(t);
 
-      console.log("updating windowlist", props.windowid);
-      setWindowList(tabs);
+      this.setState({tabIds: t, windowList: tabs})
+
+      console.log("updating windowList", props.windowId);
     });
   }
 
   // Fires when the active tab in a window changes.
   // Note that the tab's URL may not be set at the time this event fired,
   // but you can listen to tabs.onUpdated events to be notified when a URL is set.
-  function _activated(info) {
+  _activated(info) {
       console.log("activated", info);
-    if(tabids.includes(info.tabId)){
+    if(this.state.tabIds.includes(info.tabId)){
       console.log("activated", info);
       updateList();
     }
   }
 
   // Fired when a tab is attached to a window, for example because it was moved between windows.
-  function _attached(tab, info) {
+  _attached(tab, info) {
     console.log("attached", tab, info);
-    if(info.windowId == props.windowid || tabids.includes(info.tabId)) {
+    if(info.windowId == this.state.windowId || this.state.tabIds.includes(info.tabId)) {
       // console.log("attached", tab, info);
       updateList();
     }
   }
 
   // Fired when a tab is created. url might not be set yet.
-  function _created(tab) {
+  _created(tab) {
     // could just use updated probably
-    if(props.windowid == tab.windowId) {
+    if(this.state.windowId == tab.windowId) {
       console.log("created", tab);
     }
   }
 
   // Fired when a tab is detached from a window, for example because it is being moved between windows.
-  function _detached(tabid, detachInfo) {
-    console.log("detached", tabid, detachInfo);
+  _detached(tabId, detachInfo) {
+    console.log("detached", tabId, detachInfo);
   }
 
   // // Fired when the set of highlighted tabs in a window changes.
@@ -70,36 +98,36 @@ const Window = (props) => {
   // }
 
   // only for local moves within a window
-  function _moved(tabid, moveinfo) {
-    if(tabids.includes(tabid)) {
-      console.log("moved", tabid, moveinfo);
+  _moved(tabId, moveInfo) {
+    if(this.state.tabIds.includes(tabId)) {
+      console.log("moved", tabId, moveInfo);
       updateList();
     }
   }
 
   // Fired when a tab is closed.
-  function _removed(tabid, removeInfo) {
-    console.log("pre-removed", tabid, tabids);
-    if(tabids.includes(tabid)) {
-      console.log("removed", tabid);
+  _removed(tabId, removeInfo) {
+    console.log("pre-removed", tabId, tabIds);
+    if(this.state.tabIds.includes(tabId)) {
+      console.log("removed", tabId);
       updateList();
     }
   }
 
-  // Fired when a tab is replaced with another tab due to prerendering or instant.
+  // Fired when a tab is replaced with another tab due to pre-rendering or instant.
   // This event may not be relevant for or supported by browsers other than Chrome.
-  function _replaced(addedTabId, removedTabId) {
+  _replaced(addedTabId, removedTabId) {
     console.log("replaced", removedTabId, addedTabId);
   }
 
-  function _updated(tabid, changeinfo, tab) {
-    if(this.tabids.includes(tabid)){
+  _updated(tabId, changeInfo, tab) {
+    if(this.state.tabIds.includes(tabId)){
     // console.log("updated", );
       updateList();
     }
   }
 
-  function addEventHandlers() {
+  addEventHandlers() {
     let ns = chrome.tabs;
 
     ns.onActivated.addListener(_activated.bind(this));
@@ -110,20 +138,20 @@ const Window = (props) => {
     ns.onMoved.addListener(_moved.bind(this));
     ns.onRemoved.addListener(_removed.bind(this));
     ns.onReplaced.addListener(_replaced.bind(this));
-    ns.onUpdated.addListener(_updated.bind(this), {windowId: props.windowid});
+    ns.onUpdated.addListener(_updated.bind(this), {windowId: props.windowId});
     // ns.onZoomChanged.addListener(_zoom);
 
-    // if (Utils.isNumeric(changes) && tabids.includes(changes)) {
-    //   console.log("tab removed", changes, "for window", props.windowid);
+    // if (Utils.isNumeric(changes) && tabIds.includes(changes)) {
+    //   console.log("tab removed", changes, "for window", props.windowId);
     //   updateList();
-    // } else if (changes.windowId == props.windowid) {
+    // } else if (changes.windowId == props.windowId) {
     //   console.log("updated", changes);
     //   updateList();
     // }
   }
 
 
-  function removeEventHandlers() {
+  removeEventHandlers() {
     let ns = chrome.tabs;
     ns.onActivated.removeListener(_activated);
     ns.onAttached.removeListener(_attached);
@@ -137,42 +165,27 @@ const Window = (props) => {
     console.log("eventHandlersRemoved");
   }
 
-  useEffect(function () {
+  // useEffect(function () {
 
-    if (Utils.isNumeric(props.windowid) && !loaded) {
-      setLoaded(true);
-      updateList();
-      console.log("created events for window", props.windowid)
-      addEventHandlers();
-      return removeEventHandlers;
-    }
-  }, [tabids, loaded]);
+  //   if (Utils.isNumeric(props.windowId) && !loaded) {
+  //     setLoaded(true);
+  //     updateList();
+  //     console.log("created events for window", props.windowId)
+  //     addEventHandlers();
+  //     return removeEventHandlers;
+  //   }
+  // }, [tabIds, loaded]);
 
-  let title = props.windowid;
-  let displayTitle = Utils.isNumeric(title) ? `Window ${props.index + 1}: ${props.windowid}` : title;
-  let links = windowList.map(tab => {
-    return (<Link key={tab.id} tabData={tab} options={props.options} />);
-  })
 
-  return (
-    <div>
-      <h2> {displayTitle} <CloseWindowButton windowid={props.windowid} /> </h2>
-      <ul>
-        <ErrorBoundary>
-          {links}
-        </ErrorBoundary>
-      </ul>
-    </div>
-  );
 };
 
 
 const CloseWindowButton = (props) => {
   const closeHandler = () => {
-    browser.windows.remove(props.windowid);
+    browser.windows.remove(props.windowId);
   }
   return null;
   // return <span style={{color:"darkred", verticalAlign: "center", fontSize: "0.7em"}} onClick={this.closeHandler.bind(this)}>(X)</span>;
-}
+};
 
 export default Window;

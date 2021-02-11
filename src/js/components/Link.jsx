@@ -56,7 +56,7 @@ const Link = (props) => {
             {linkText}
             {active(tab.active)}
           </a>
-          <span>&nbsp;</span><CloseTabButton tabid={tab.id} />
+          <span>&nbsp;</span><CloseTabButton tabId={tab.id} />
         </li>
       // )}
     // </Draggable >
@@ -66,7 +66,7 @@ const Link = (props) => {
 
 class CloseTabButton extends Component {
   closeHandler() {
-    browser.tabs.remove(this.props.tabid);
+    browser.tabs.remove(this.props.tabId);
   }
   render() {
     return <span style={{ color: "darkred", verticalAlign: "center" }} onClick={this.closeHandler.bind(this)}>(X)</span>;
@@ -120,7 +120,7 @@ export default Link;
 //               {linkText}
 //               {active(tab.active)}
 //             </a>
-//             <span>&nbsp;</span><CloseTabButton tabid={tab.id} />
+//             <span>&nbsp;</span><CloseTabButton tabId={tab.id} />
 //           </li>
 //         )}
 //       </Draggable >
