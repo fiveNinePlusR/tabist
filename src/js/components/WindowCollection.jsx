@@ -1,18 +1,27 @@
-// import React, { Component } from 'react';
-import React, { useState, useEffect } from 'react';
-
+import React, { Component } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import _ from 'underscore';
 
-// import Utils from '../lib/utils';
 import Window from './Window';
-import Footer from './Footer';
-import { Component } from 'react';
 
 
 class WindowCollection extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { windowId: props.windowId }
+    chrome.windows.onRemoved.addListener(this.updateWindows.bind(this))
+    chrome.windows.onCreated.addListener(this.updateWindows.bind(this))
+    this.updateWindows()
+  }
+
+  componentWillUnmount() {
+    chrome.windows.onRemoved.removeListener(this.updateWindows.bind(this))
+    chrome.windows.onCreated.removeListener(this.updateWindows.bind(this))
+  }
+
   onDragEnd(result) {
     console.log("drag ended", result);
+    if (!result.destination || !result.destination.droppableId) { return; }
     var dest = result.destination.droppableId;
     dest = parseInt(dest.replace("windownum-", ""), 10);
     var destIndex = parseInt(result.destination.index, 10);
@@ -27,57 +36,37 @@ class WindowCollection extends Component {
       console.log("moving:", tab.id, `to window: ${dest} index: ${destIndex}`)
       browser.tabs.move(tab.id, { windowId: dest, index: destIndex }).then(result => {
         console.log("finished moving tab");
-        props.updateList();
+        this.updateWindows();
       })
     });
     browser.tabs.query({ windowId: parseInt(dest, 10) }).then(r => { console.log("dest", r) });
   };
 
+
   componentDidMount() {
-    updateWindows();
-
-    chrome.windows.onRemoved.addListener(updateWindows)
-    chrome.windows.onCreated.addListener(updateWindows)
-
-    return function cleanup() {
-      chrome.windows.onRemoved.removeListener(updateWindows)
-      chrome.windows.onCreated.removeListener(updateWindows)
-    };
+    // this.updateWindows();
   }
 
   componentDidUpdate() {
 
   }
 
-  // let [windowList, setwindowList] = useState([]);
-
   // let audible = <Window title={"Audible Tabs"} id="audible" tabs={props.audibleTabs} options={props.options} />;
   updateWindows() {
     browser.windows.getAll({ windowTypes: ["normal"] }).then(windows => {
-      // console.log("windowCollection: windows", windows);
-      // setwindowList(windows);
-      this.setState(windows)
+      //problem is that the window number don't change...
+      this.setState({ windowList: windows })
+      this.forceUpdate((result) => {
+        console.log("window update forced")
+      })
     });
   }
 
-  // useEffect(() => {
-  //   // console.log("from windowCollection");
-  //   updateWindows();
-
-  //   chrome.windows.onRemoved.addListener(updateWindows)
-  //   chrome.windows.onCreated.addListener(updateWindows)
-
-  //   return function cleanup() {
-  //     chrome.windows.onRemoved.removeListener(updateWindows)
-  //     chrome.windows.onCreated.removeListener(updateWindows)
-  //   };
-  // }, []);
-
-  // console.log("windowId", props.windowId, windowList);
-  render(props) {
-    theWindows = props.windowList.map((window, index) => {
+  render() {
+    if (!this.state || !this.state.windowList) { return null; }
+    var theWindows = this.state.windowList.map((window, index) => {
       return (
-        <Droppable droppableId={`windownum-${window}`} >
+        <Droppable droppableId={`windownum-${window.id}`} >
           {(provided, snapshot) => (
             <div
               ref={provided.innerRef}
@@ -87,6 +76,7 @@ class WindowCollection extends Component {
                 windowId={window.id}
                 index={index}
                 key={window.id}
+                options={this.props.options}
               />
 
               {provided.placeholder}
@@ -95,10 +85,9 @@ class WindowCollection extends Component {
         </Droppable>
       );
     });
-    console.log(theWindows, "thewindows");
 
     return (
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DragDropContext onDragEnd={this.onDragEnd.bind(this)}>
         <div key="list">
           {/* {audible} */}
           {theWindows}
@@ -107,100 +96,7 @@ class WindowCollection extends Component {
       </DragDropContext>
     );
   }
-
-  // useEffect(() => {
-  //   let audibleTabs = props.tabs.filter(tab => tab.audible);
-  // });
-
-
-  // let windows = windowList//props.windowdata;
-  // let renderedWindows = Array.from(windows.keys()).map((window, index) => {
-  //   return (
-  //     <Droppable droppableId={`windownum-${window}`} >
-  //       {(provided, snapshot) => (
-  //         <div
-  //           ref={provided.innerRef}
-  //           {...provided.droppableProps}
-  //         >
-  //           <Window
-  //             key={window}
-  //             title={window}
-  //             index={index + 1}
-  //             id={window}
-  //             tabs={windows.get(window)}
-  //             options={props.options}
-  //             // innerRef={provided.innerRef}
-  //             />
-
-  //             {provided.placeholder}
-  //         </div>
-  //       )}
-  //     </Droppable>
-  //   )
-  // });
-
-
-  // let footer = <Footer start={props.start} end={props.end} totalNumberWindows={props.windowcount} totalTabs={props.tabcount} />;
-
-  // return (
-  //   <DragDropContext onDragEnd={onDragEnd}>
-  //     <div key="list">
-  //       {/* {audible} */}
-  //       {renderedWindows}
-  //       {/* {footer} */}
-  //     </div>
-  //   </DragDropContext>
-  // );
 };
 
 export default WindowCollection;
 
-// class WindowCollection extends Component {
-
-
-//   render() {
-//     let windows = this.props.windowdata;
-//     let renderedWindows = Array.from(windows.keys()).map((window, index) => {
-//       console.log("window", window)
-//       return (
-//         <Droppable droppableId={`windownum-${window}`} >
-//           {(provided, snapshot) => (
-//             <div
-//               ref={provided.innerRef}
-//               {...provided.droppableProps}
-//             >
-//               <Window
-//                 key={window}
-//                 title={window}
-//                 index={index + 1}
-//                 id={window}
-//                 tabs={windows.get(window)}
-//                 options={this.props.options}
-//                 // innerRef={provided.innerRef}
-//                 />
-
-
-//                 {provided.placeholder}
-//             </div>
-//           )}
-//         </Droppable>
-//       )
-//     });
-
-
-//     let audible = <Window title={"Audible Tabs"} id="audible" tabs={this.props.audibleTabs} options={this.props.options} />;
-//     let footer = <Footer start={this.props.start} end={this.props.end} totalNumberWindows={this.props.windowcount} totalTabs={this.props.tabcount} />;
-
-//     return (
-//       <DragDropContext onDragEnd={this.onDragEnd}>
-//         <div key="list">
-//           {audible}
-//           {renderedWindows}
-//           {footer}
-//         </div>
-//       </DragDropContext>
-//     );
-//   };
-// }
-
-// export default WindowCollection;

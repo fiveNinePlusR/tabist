@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component } from 'react';
+import React, { Component } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 const Link = (props) => {
@@ -94,38 +94,5 @@ function audible(audible) {
 
 export default Link;
 
-// class Link extends Component {
-
-//   render() {
-//     let tab = this.props.tabData;
-//     // console.log(tab);
-//     var linkText = tab.title || tab.url;
-//     this.options = this.props.options;
-
-//     return (
-//       <Draggable draggableId={`draggable-tab-id-${tab.id}`} index={tab.index} >
-//         {(provided, snapshot) => (
-//           <li
-//             ref={provided.innerRef}
-//             {...provided.draggableProps}
-//             {...provided.dragHandleProps}
-//             key={tab.id}
-//           >
-//             <a href="#"
-//               className="links"
-//               onAuxClick={this.clickHandler.bind(this)}
-//               onClick={this.clickHandler.bind(this)} >
-//               {favicon(tab.favIconUrl)}
-//               {audible(tab.audible)}
-//               {linkText}
-//               {active(tab.active)}
-//             </a>
-//             <span>&nbsp;</span><CloseTabButton tabId={tab.id} />
-//           </li>
-//         )}
-//       </Draggable >
-//     );
-//   }
-// }
 
 
