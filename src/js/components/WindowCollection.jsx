@@ -39,7 +39,7 @@ class WindowCollection extends Component {
         this.updateWindows();
       })
     });
-    browser.tabs.query({ windowId: parseInt(dest, 10) }).then(r => { console.log("dest", r) });
+    // browser.tabs.query({ windowId: parseInt(dest, 10) }).then(r => { console.log("dest", r) });
   };
 
 
