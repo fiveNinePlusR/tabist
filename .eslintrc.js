@@ -3,8 +3,7 @@ module.exports = {
     "browser": true,
     "es6": true
   },
-  "plugins": ["react-hooks"],
-  "extends": ["eslint:recommended", "plugin:react-hooks/recommended"],
+  "extends": ["eslint:recommended"],
   "parserOptions": {
     "sourceType": "module"
   },
@@ -32,7 +31,5 @@ module.exports = {
       "always"
 
     ],
-    // "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
-    // "react-hooks/exhaustive-deps": "warn" // Checks effect dependencies
   }
 };
