@@ -43,6 +43,7 @@
     let opts = getOptions();
   // {windowTabs, windowcount, tabcount, start, end, tabs}
     Promise.all([tabs, opts]).then(([{windowTabs, tabcount, windowcount, start, end, tabs}, options]) => {
+    // update the full list of tabs in windows
     });
     refreshcount += 1;
     refreshcountElement.innerText = `Refresh Count: ${refreshcount}`;
