@@ -1,4 +1,3 @@
-<script>
   "use strict";
   import {Bus, fromEvent, mergeAll} from "baconjs";
   import Utils from "./lib/utils.js";
@@ -44,6 +43,18 @@
   // {windowTabs, windowcount, tabcount, start, end, tabs}
     Promise.all([tabs, opts]).then(([{windowTabs, tabcount, windowcount, start, end, tabs}, options]) => {
     // update the full list of tabs in windows
+    // let window = (<WindowCollection
+
+    //               windowdata={windowTabs}
+    //               // audibleTabs={audibleTabs}
+    //               windowcount={windowcount}
+    //               tabcount={tabcount}
+    //               tabs={tabs}
+    //               options={options} start={start} end={end} updateList={updateTabList} />);
+    // console.log("updating tab list");
+
+    // ReactDOM.render(window,
+    //                 document.getElementById("reacttest"));
     });
     refreshcount += 1;
     refreshcountElement.innerText = `Refresh Count: ${refreshcount}`;
@@ -205,17 +216,3 @@
   });
 
   updateTabList();
-</script>
-
-    // let window = (<WindowCollection
-
-    //               windowdata={windowTabs}
-    //               // audibleTabs={audibleTabs}
-    //               windowcount={windowcount}
-    //               tabcount={tabcount}
-    //               tabs={tabs}
-    //               options={options} start={start} end={end} updateList={updateTabList} />);
-    // console.log("updating tab list");
-
-    // ReactDOM.render(window,
-    //                 document.getElementById("reacttest"));
