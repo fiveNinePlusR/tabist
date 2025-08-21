@@ -24,7 +24,7 @@ function copyStatic() {
   mkdirSync("dist", { recursive: true });
 
   copyFileSync("manifest.json", "dist/manifest.json");
-  copyRecursive("public", "dist");
+  copyRecursive("tabist", "dist");
 }
 
 async function build() {
@@ -32,8 +32,9 @@ async function build() {
 
   let context = await esbuild.context({
     entryPoints: {
-      "popup/main": "src/popup/main.js",
-      background: "src/background.js",
+      tabs: "src/js/tabs.svelte",
+      background: "src/js/background.js",
+      options: "src/js/options.js",
     },
     bundle: true,
     platform: "browser",
