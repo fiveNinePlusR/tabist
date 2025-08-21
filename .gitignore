@@ -2,3 +2,4 @@ web-ext-artifacts
 tabist/*.js
 *.map
 tabist/lib/js/react-debugging.js
+dist/
