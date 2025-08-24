@@ -13,8 +13,8 @@
     "esbuild": "^0.25.0",
     "esbuild-svelte": "^0.9.3",
     "npm-run-all": "^4.1.5",
-    "svelte": "^4.2.0",
-    "svelte-preprocess": "^5.1.4",
+    "svelte": "^5.38.3",
+    "svelte-preprocess": "^6.0.3",
     "web-ext": "^8.9.0"
   },
   "scripts": {
