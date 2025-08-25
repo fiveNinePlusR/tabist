@@ -107,10 +107,11 @@
             <a href={link.url} class="links">
               <span>
                 <img
-                  src={link.imgsrc}
+                  src={link.favIconUrl}
                   width="24"
                   height="24"
-                  alt={link.title}
+                  alt=""
+                  hidden={link.favIconUrl === undefined}
                 /><span>&nbsp;</span>
               </span>
               {link.title}
