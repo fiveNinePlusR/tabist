@@ -21,6 +21,7 @@
   let sortByDomainValue = false;
   let windowTabs = $state({});
   let tabs = $state({});
+  let audibleTabs = $state({});
   let tabcount = $state(0);
   let windowcount = $state(0);
   let start = $state(0);
@@ -32,7 +33,7 @@
     log("get tabs running");
 
     return await browser.tabs.query({}).then((tabs) => {
-      // let audibleTabs = tabs.filter(tab => tab.audible);
+      let audibleTabs = tabs.filter(tab => tab.audible);
       // log(tabs);
 
       // //loop through the tabs and group them by windows for display
@@ -45,7 +46,7 @@
 
       let end = Date.now();
 
-      return { windowTabs, tabcount, windowcount, start, end, tabs };
+      return { windowTabs, tabcount, windowcount, start, end, tabs, audibleTabs };
     });
   }
 
@@ -58,6 +59,7 @@
       start = currentState.start;
       end = currentState.end;
       tabs = currentState.tabs;
+      audibleTabs = currentState.audibleTabs;
     });
   }
 
