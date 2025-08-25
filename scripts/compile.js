@@ -24,6 +24,7 @@ function copyStatic() {
   mkdirSync("dist", { recursive: true });
 
   copyRecursive("tabist", "dist");
+  copyFileSync("src/js/lib/utils.js", "dist/lib/js/utils.js");
 }
 
 async function build() {
