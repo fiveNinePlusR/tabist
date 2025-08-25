@@ -1,4 +1,5 @@
 <script>
+  import Utils from './lib/utils.js';
 
     // onMount(() => {
   //   document.getElementById('refresh_link').addEventListener('click', () => {
@@ -9,11 +10,58 @@
   //     document.getElementById('controls').hidden = !document.getElementById('controls').hidden;
   //   });
   // });
-  let links = [
-    { url: 'https://example.com', title: 'Example', imgsrc: 'https://picsum.dev//24' },
-    { url: 'https://example.org', title: 'Example Org', imgsrc: 'https://picsum.dev//24' },
-    // Add more links as needed
-  ];
+  // let links = [
+  //   { url: 'https://example.com', title: 'Example', imgsrc: 'https://picsum.dev//24' },
+  //   { url: 'https://example.org', title: 'Example Org', imgsrc: 'https://picsum.dev//24' },
+  //   // Add more links as needed
+  // ];
+
+  function log(s) { console.log(s); }
+
+  let sortByDomainValue = false;
+  let windowTabs = $state({});
+  let tabs = $state({});
+  let tabcount = $state(0);
+  let windowcount = $state(0);
+  let start = $state(0);
+  let end = $state(0);
+
+  async function getTabs() {
+    var start = Date.now();
+
+    log("get tabs running");
+
+    return await browser.tabs.query({}).then((tabs) => {
+      // let audibleTabs = tabs.filter(tab => tab.audible);
+      // log(tabs);
+
+      // //loop through the tabs and group them by windows for display
+      // let sortType = groupbyDomainElement.checked ? "domain": "window";
+      // let groups = Utils.groupTabs(tabs, sortType);
+      let groups = Utils.groupTabs(tabs, "window");
+      let windowTabs = Utils.sortByDomain(sortByDomainValue, groups);
+      let tabcount = tabs.length;
+      let windowcount = windowTabs.size;
+
+      let end = Date.now();
+
+      return { windowTabs, tabcount, windowcount, start, end, tabs };
+    });
+  }
+
+  function updateTabs() {
+    getTabs().then((currentState) => {
+      log(currentState);
+      windowTabs = currentState.windowTabs;
+      tabcount = currentState.tabcount;
+      windowcount = currentState.windowcount;
+      start = currentState.start;
+      end = currentState.end;
+      tabs = currentState.tabs;
+    });
+  }
+
+  updateTabs();
 
 </script>
 
@@ -48,12 +96,13 @@
       </div>
 
       <div id="content">
-        <div>
-        <!-- { @render window(links, 'Window 1') } -->
-        window
-        </div>
         <!-- Example: Render links with each loop -->
-        {#each links as link}
+        {#each windowTabs as [windowid, window], i (windowid)}
+          {@debug window}
+          <div>
+            <h2>window { i + 1 }</h2>
+          </div>
+          {#each window as link }
           <li>
             <a href={link.url} class="links">
               <span>
@@ -69,13 +118,15 @@
             <span>&nbsp;</span><span style="color: darkred">(X)</span>
           </li>
         {/each}
+
+        {/each}
       </div>
 
             <div>
-            <h2>Total Windows: 2</h2>
-            <h2>Total Tabs: 35</h2>
-            <h2>Average Tabs Per Window: 17.50</h2>
-            <h4>Created In: 5ms</h4>
+            <h2>Total Windows: {windowcount}</h2>
+            <h2>Total Tabs: {tabcount}</h2>
+            <h2>Average Tabs Per Window: {tabcount / windowcount}</h2>
+            <h4>Created In: {end - start}</h4>
           </div>
         </div>
 
