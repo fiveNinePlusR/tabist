@@ -100,7 +100,7 @@
         {#each windowTabs as [windowid, window], i (windowid)}
           {@debug window}
           <div>
-            <h2>window { i + 1 }</h2>
+            <h2>Window { i + 1 }</h2>
           </div>
           {#each window as link }
           <li>
