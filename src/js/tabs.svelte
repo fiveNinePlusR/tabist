@@ -16,7 +16,7 @@
   //   // Add more links as needed
   // ];
 
-  function log(...s) { console.log(...s); }
+  function log(...s) { if(developmentMode) { console.log(...s); } }
   function int(value) { return parseInt(value, 10) }
 
   let sortByDomainValue = false;
@@ -28,6 +28,13 @@
   let start = $state(0);
   let end = $state(0);
   let updatecount = $state(0);
+  let developmentStatus = $state("");
+  let developmentMode = $state(false);
+
+  browser.management.getSelf(info => {
+      developmentStatus = info.installType == "normal" ? "" : info.installType;
+      developmentMode = info.installType != "normal";
+  });
 
   async function getTabs() {
     var start = Date.now();
@@ -218,8 +225,8 @@
 
       <hr />
 
-      <h3 id="version">Tabist (0.1.10)</h3>
-      <h4 id="developmentStatus">development</h4>
+      <h3 id="version">Tabist (0.1.20)</h3>
+      <h4 id="developmentStatus">{developmentStatus}</h4>
       <a href="https://github.com/fiveNinePlusR/tabist/issues"
         >Problems? Suggestions? Report feedback or issues here</a
       >
