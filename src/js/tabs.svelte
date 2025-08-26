@@ -1,21 +1,6 @@
 <script>
   import Utils from './lib/utils.js';
 
-    // onMount(() => {
-  //   document.getElementById('refresh_link').addEventListener('click', () => {
-  //     location.reload();
-  //   });
-
-  //   document.getElementById('display_options_link').addEventListener('click', () => {
-  //     document.getElementById('controls').hidden = !document.getElementById('controls').hidden;
-  //   });
-  // });
-  // let links = [
-  //   { url: 'https://example.com', title: 'Example', imgsrc: 'https://picsum.dev//24' },
-  //   { url: 'https://example.org', title: 'Example Org', imgsrc: 'https://picsum.dev//24' },
-  //   // Add more links as needed
-  // ];
-
   function log(...s) { if(developmentMode) { console.log(...s); } }
   function int(value) { return parseInt(value, 10) }
 
@@ -182,13 +167,8 @@
           <li>
             <a href={link.url} class="links" onclick={handleClicked} onauxclick={handleClicked} tabid={link.id} windowid={link.windowId}>
               <span>
-                <img
-                  src={link.favIconUrl}
-                  width="24"
-                  height="24"
-                  alt=""
-                  hidden={link.favIconUrl === undefined}
-                /><span>&nbsp;</span>
+                <img src={link.favIconUrl} width="24" height="24" alt="" hidden={link.favIconUrl === undefined}/>
+                <span>&nbsp;</span>
               </span>
               {#if link.audible }<span>&#x1f508;</span>{/if}
               {link.title} ({link.id})
@@ -214,6 +194,4 @@
 
       <h3 id="version">Tabist (0.1.20)</h3>
       <h4 id="developmentStatus">{developmentStatus}</h4>
-      <a href="https://github.com/fiveNinePlusR/tabist/issues"
-        >Problems? Suggestions? Report feedback or issues here</a
-      >
+      <a href="https://github.com/fiveNinePlusR/tabist/issues">Problems? Suggestions? Report feedback or issues here</a>
