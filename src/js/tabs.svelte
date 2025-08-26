@@ -125,7 +125,7 @@
 
     <div class="container">
       <h1>Tabist</h1>
-      <a class="btn btn-secondary" id="refresh_link">Refresh</a>
+      <a class="btn btn-secondary" id="refresh_link" onclick={updateTabs}>Refresh</a>
       <a class="btn btn-secondary" id="display_options_link">Show Options</a>
       <hr />
       <h3 id="refreshcount">Refresh Count: {updatecount}</h3>
