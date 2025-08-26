@@ -66,6 +66,58 @@
     });
   }
 
+  function handleClicked(e) {
+    log("link clicked", e);
+
+    let tabid = int(e.target.getAttribute('tabid'));
+    let windowid = int(e.target.getAttribute('windowid'));
+
+    log(tabid, windowid)
+
+    //  only need for react
+    // e.persist();
+    //stops the jarring page reload on click
+
+    e.preventDefault();
+    console.log(e);
+
+    // return false;
+
+    if( e.button == 1 ) {
+      //middle click
+      browser.tabs.remove(tabid);
+
+      return;
+    } else if( e.button == 2 ) {
+      //right click
+      return;
+    }
+
+    let p1 = browser.tabs.update(tabid, { active: true });
+    let p2 = browser.windows.update(windowid, { focused: true });
+
+
+    // TODO: figure out how to close the tabist tab after clicking a link
+    // if the option is set to do so
+    // Promise.all([p1, p2]).then(() => {
+    //   if (props.options != "undefined" && props.options.closetab) {
+    //     chrome.tabs.getCurrent(tab => {
+    //       chrome.tabs.remove(tab.id);
+    //     });
+    //   }
+    // });
+
+    return false;
+  }
+
+  browser.tabs.onActivated.addListener(updateTabs);
+  browser.tabs.onAttached.addListener(updateTabs);
+  browser.tabs.onCreated.addListener(updateTabs);
+  browser.tabs.onDetached.addListener(updateTabs);
+  browser.tabs.onMoved.addListener(updateTabs);
+  browser.tabs.onRemoved.addListener(updateTabs);
+  browser.tabs.onUpdated.addListener(updateTabs);
+
   updateTabs();
 
 </script>
@@ -109,7 +161,7 @@
           </div>
           {#each window as link }
           <li>
-            <a href={link.url} class="links">
+            <a href={link.url} class="links" onclick={handleClicked} onauxclick={handleClicked} tabid={link.id} windowid={link.windowId}>
               <span>
                 <img
                   src={link.favIconUrl}
