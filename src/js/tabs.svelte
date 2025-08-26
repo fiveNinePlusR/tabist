@@ -153,6 +153,30 @@
       </div>
 
       <div id="content">
+        <div>
+          <h2>Audible Tabs: {audibleTabs.length}</h2>
+          <ul>
+            {#each audibleTabs as link }
+            <li>
+              <a href={link.url} class="links" onclick={handleClicked} onauxclick={handleClicked} tabid={link.id} windowid={link.windowId}>
+                <span>
+                  <img
+                    src={link.favIconUrl}
+                    width="24"
+                    height="24"
+                    alt=""
+                    hidden={link.favIconUrl === undefined}
+                  /><span>&nbsp;</span>
+                </span>
+                <span>&#x1f508;</span>
+                {link.title} ({link.id})
+              </a>
+              <span style="color: darkred">(X)</span>
+            </li>
+            {/each}
+          </ul>
+
+        </div>
         <!-- Example: Render links with each loop -->
         {#each windowTabs as [windowid, window], i (windowid)}
           {@debug window}
@@ -171,7 +195,8 @@
                   hidden={link.favIconUrl === undefined}
                 /><span>&nbsp;</span>
               </span>
-              {link.title}
+              {#if link.audible }<span>&#x1f508;</span>{/if}
+              {link.title} ({link.id})
             </a>
             {#if link.active }
             <span style="color: darkred"> &raquo; (Selected)</span>
