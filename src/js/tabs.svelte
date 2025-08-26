@@ -16,7 +16,8 @@
   //   // Add more links as needed
   // ];
 
-  function log(s) { console.log(s); }
+  function log(...s) { console.log(...s); }
+  function int(value) { return parseInt(value, 10) }
 
   let sortByDomainValue = false;
   let windowTabs = $state({});
