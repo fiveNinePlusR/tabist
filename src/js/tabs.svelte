@@ -173,7 +173,10 @@
               </span>
               {link.title}
             </a>
-            <span>&nbsp;</span><span style="color: darkred">(X)</span>
+            {#if link.active }
+            <span style="color: darkred"> &raquo; (Selected)</span>
+            {/if}
+            <span style="color: darkred">(X)</span>
           </li>
         {/each}
 
