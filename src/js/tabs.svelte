@@ -27,6 +27,7 @@
   let windowcount = $state(0);
   let start = $state(0);
   let end = $state(0);
+  let updatecount = $state(0);
 
   async function getTabs() {
     var start = Date.now();
@@ -61,6 +62,7 @@
       end = currentState.end;
       tabs = currentState.tabs;
       audibleTabs = currentState.audibleTabs;
+      updatecount += 1
     });
   }
 
@@ -74,7 +76,7 @@
       <a class="btn btn-secondary" id="refresh_link">Refresh</a>
       <a class="btn btn-secondary" id="display_options_link">Show Options</a>
       <hr />
-      <h3 id="refreshcount">Refresh Count: 1</h3>
+      <h3 id="refreshcount">Refresh Count: {updatecount}</h3>
       <hr />
       <div id="controls" class="container" hidden="">
         <div class="row">
