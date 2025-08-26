@@ -205,8 +205,8 @@
             <div>
             <h2>Total Windows: {windowcount}</h2>
             <h2>Total Tabs: {tabcount}</h2>
-            <h2>Average Tabs Per Window: {tabcount / windowcount}</h2>
-            <h4>Created In: {end - start}</h4>
+            <h2>Average Tabs Per Window: {(tabcount / windowcount).toFixed(2)}</h2>
+            <h4>Created In: {end - start}ms</h4>
           </div>
         </div>
 
