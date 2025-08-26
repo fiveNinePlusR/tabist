@@ -79,16 +79,8 @@
     let tabid = int(e.target.getAttribute('tabid'));
     let windowid = int(e.target.getAttribute('windowid'));
 
-    log(tabid, windowid)
-
-    //  only need for react
-    // e.persist();
-    //stops the jarring page reload on click
-
     e.preventDefault();
-    console.log(e);
-
-    // return false;
+    log(e);
 
     if( e.button == 1 ) {
       //middle click
@@ -104,8 +96,8 @@
     let p2 = browser.windows.update(windowid, { focused: true });
 
 
-    // TODO: figure out how to close the tabist tab after clicking a link
-    // if the option is set to do so
+    // TODO: close the tabist tab after clicking a link
+    // if the option is set to do so and we have options ready
     // Promise.all([p1, p2]).then(() => {
     //   if (props.options != "undefined" && props.options.closetab) {
     //     chrome.tabs.getCurrent(tab => {
@@ -160,6 +152,8 @@
       </div>
 
       <div id="content">
+
+      <!-- audible tabs -->
         <div>
           <h2>Audible Tabs: {audibleTabs.length}</h2>
           <ul>
@@ -167,13 +161,8 @@
             <li>
               <a href={link.url} class="links" onclick={handleClicked} onauxclick={handleClicked} tabid={link.id} windowid={link.windowId}>
                 <span>
-                  <img
-                    src={link.favIconUrl}
-                    width="24"
-                    height="24"
-                    alt=""
-                    hidden={link.favIconUrl === undefined}
-                  /><span>&nbsp;</span>
+                  <img src={link.favIconUrl} width="24" height="24" alt="" hidden={link.favIconUrl === undefined}/>
+                  <span>&nbsp;</span>
                 </span>
                 <span>&#x1f508;</span>
                 {link.title} ({link.id})
@@ -182,11 +171,10 @@
             </li>
             {/each}
           </ul>
-
         </div>
-        <!-- Example: Render links with each loop -->
+
+        <!-- normal tabs -->
         {#each windowTabs as [windowid, window], i (windowid)}
-          {@debug window}
           <div>
             <h2>Window { i + 1 }</h2>
           </div>
@@ -210,8 +198,7 @@
             {/if}
             <span style="color: darkred">(X)</span>
           </li>
-        {/each}
-
+          {/each}
         {/each}
       </div>
 
