@@ -138,22 +138,29 @@
 
       <div id="content">
 
+      {#snippet renderlink(l)}
+            <li>
+              <a href={l.url} class="links" onclick={handleClicked} onauxclick={handleClicked} tabid={l.id} windowid={l.windowId}>
+                <span>
+                  <img src={l.favIconUrl} width="24" height="24" alt="" hidden={l.favIconUrl === undefined}/>
+                  <span>&nbsp;</span>
+                </span>
+                {#if l.audible }<span>&#x1f508;</span>{/if}
+                {l.title} ({l.id})
+              </a>
+              {#if l.active }
+                <span style="color: darkred"> &raquo; (Selected)</span>
+              {/if}
+              <span style="color: darkred">(X)</span>
+            </li>
+      {/snippet}
+
       <!-- audible tabs -->
         <div>
           <h2>Audible Tabs: {audibleTabs.length}</h2>
           <ul>
             {#each audibleTabs as link }
-            <li>
-              <a href={link.url} class="links" onclick={handleClicked} onauxclick={handleClicked} tabid={link.id} windowid={link.windowId}>
-                <span>
-                  <img src={link.favIconUrl} width="24" height="24" alt="" hidden={link.favIconUrl === undefined}/>
-                  <span>&nbsp;</span>
-                </span>
-                <span>&#x1f508;</span>
-                {link.title} ({link.id})
-              </a>
-              <span style="color: darkred">(X)</span>
-            </li>
+              {@render renderlink(link) }
             {/each}
           </ul>
         </div>
@@ -164,20 +171,7 @@
             <h2>Window { i + 1 }</h2>
           </div>
           {#each window as link }
-          <li>
-            <a href={link.url} class="links" onclick={handleClicked} onauxclick={handleClicked} tabid={link.id} windowid={link.windowId}>
-              <span>
-                <img src={link.favIconUrl} width="24" height="24" alt="" hidden={link.favIconUrl === undefined}/>
-                <span>&nbsp;</span>
-              </span>
-              {#if link.audible }<span>&#x1f508;</span>{/if}
-              {link.title} ({link.id})
-            </a>
-            {#if link.active }
-            <span style="color: darkred"> &raquo; (Selected)</span>
-            {/if}
-            <span style="color: darkred">(X)</span>
-          </li>
+            {@render renderlink(link) }
           {/each}
         {/each}
       </div>
