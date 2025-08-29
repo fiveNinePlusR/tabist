@@ -1,3 +1,6 @@
+// const { each } = require("underscore");
+import _, { map } from 'underscore';
+
 let  Utils = {
   groupTabs(tabs, method) {
     if (method == "window") {
@@ -14,7 +17,15 @@ let  Utils = {
   // input [tabs]
   // Map {window_id => [tab]+}
   groupByWindow(tabs) {
-    return tabs.reduce(function(memo, cur) {
+    // return tabs.reduce(function(memo, cur) {
+    //   let win = memo.get(cur.windowId) || [];
+
+    //   win.push(cur);
+    //   memo.set(cur.windowId, win);
+
+    //   return memo;
+    // }, new Map());
+    let windows = tabs.reduce(function(memo, cur) {
       let win = memo.get(cur.windowId) || [];
 
       win.push(cur);
@@ -22,6 +33,33 @@ let  Utils = {
 
       return memo;
     }, new Map());
+
+    console.log("in groupbywindow", windows)
+
+    let windowArray = []
+    let keys = windows.keys()
+
+
+    console.log("windows", windows)
+    console.log("keys", keys)
+
+    // _.each(keys, function(key) {
+    for (let key of keys) {
+      console.log("key", key)
+      let currentWindow = [];
+//      _.each(windows[key], function(value) {
+      for (let value of windows.get(key)) {
+        value["windowId"] = key;
+        currentWindow.push(value);
+        console.log("value", value)
+      }
+
+      windowArray.push(currentWindow);
+    }
+
+    console.log("windowArray", windowArray)
+    // windowArray a double level array with tabs with windowId set
+    return windowArray
   },
 
   // returns tabs grouped by domain name
