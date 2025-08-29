@@ -1,5 +1,6 @@
 <script>
   import Utils from './lib/utils.js';
+  import { dndzone } from "svelte-dnd-action";
 
   function log(...s) { if(developmentMode) { console.log(...s); } }
   function int(value) { return parseInt(value, 10) }
@@ -102,6 +103,22 @@
   browser.tabs.onRemoved.addListener(updateTabs);
   browser.tabs.onUpdated.addListener(updateTabs);
 
+
+  function handleDndConsider(e) {
+    const { items: newItems, info } = e.detail;
+    log("consider", newItems, info);
+    // windowTabs = newItems;
+  }
+
+  function handleDndFinalize(e) {
+    const { items: newItems, info } = e.detail;
+    log("finalize", newItems, info);
+    // windowTabs = newItems;
+  }
+
+
+
+
   updateTabs();
 
 </script>
@@ -109,8 +126,9 @@
 
     <div class="container">
       <h1>Tabist</h1>
-      <a class="btn btn-secondary" id="refresh_link" onclick={updateTabs}>Refresh</a>
+      <button type="button" class="btn btn-secondary" id="refresh_link" onclick={updateTabs}>Refresh</button>
       <a class="btn btn-secondary" id="display_options_link">Show Options</a>
+
       <hr />
       <h3 id="refreshcount">Refresh Count: {updatecount}</h3>
       <hr />
@@ -165,14 +183,17 @@
           </ul>
         </div>
 
+
         <!-- normal tabs -->
-        {#each windowTabs as [windowid, window], i (windowid)}
+        {#each windowTabs as window, i}
           <div>
             <h2>Window { i + 1 }</h2>
           </div>
-          {#each window as link }
-            {@render renderlink(link) }
-          {/each}
+          <!-- <section aria-label="windows" use:dndzone="{{items: window}}" onconsider="{handleDndConsider}" onfinalize="{handleDndFinalize}" section="windows-section"> -->
+             {#each window as link (link.id) }
+               {@render renderlink(link) }
+             {/each}
+          <!-- </section> -->
         {/each}
       </div>
 
