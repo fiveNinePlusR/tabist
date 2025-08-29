@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      svelte-dnd-action:
+        specifier: ^0.9.64
+        version: 0.9.64(svelte@5.38.3)
       underscore:
         specifier: ^1.11.0
         version: 1.13.7
@@ -1880,6 +1883,11 @@ packages:
   supports-preserve-symlinks-flag@1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
+
+  svelte-dnd-action@0.9.64:
+    resolution: {integrity: sha512-kbbnOTuVc+VINheraVyEQ7K11jXdQii6JNTGpsyIuwUqmda030eT3rPpqckD8UVh1DuyYH3xqyJDTWb8S610Jg==}
+    peerDependencies:
+      svelte: '>=3.23.0 || ^5.0.0-next.0'
 
   svelte-preprocess@6.0.3:
     resolution: {integrity: sha512-PLG2k05qHdhmRG7zR/dyo5qKvakhm8IJ+hD2eFRQmMLHp7X3eJnjeupUtvuRpbNiF31RjVw45W+abDwHEmP5OA==}
@@ -4109,6 +4117,10 @@ snapshots:
       has-flag: 4.0.0
 
   supports-preserve-symlinks-flag@1.0.0: {}
+
+  svelte-dnd-action@0.9.64(svelte@5.38.3):
+    dependencies:
+      svelte: 5.38.3
 
   svelte-preprocess@6.0.3(@babel/core@7.28.0)(postcss@8.5.6)(svelte@5.38.3)(typescript@5.9.2):
     dependencies:

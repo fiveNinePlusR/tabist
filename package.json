@@ -4,6 +4,7 @@
   "description": "Simple Tab Switcher",
   "main": " ",
   "dependencies": {
+    "svelte-dnd-action": "^0.9.64",
     "underscore": "^1.11.0",
     "webextension-polyfill": "^0.12.0"
   },
