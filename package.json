@@ -4,6 +4,7 @@
   "description": "Simple Tab Switcher",
   "main": " ",
   "dependencies": {
+    "@thisux/sveltednd": "^0.0.20",
     "underscore": "^1.11.0",
     "webextension-polyfill": "^0.12.0"
   },

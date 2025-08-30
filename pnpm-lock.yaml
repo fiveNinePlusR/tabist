@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@thisux/sveltednd':
+        specifier: ^0.0.20
+        version: 0.0.20(svelte@5.38.3)
       underscore:
         specifier: ^1.11.0
         version: 1.13.7
@@ -378,6 +381,24 @@ packages:
     resolution: {integrity: sha512-IwQk4yfwLdibDlrXVE04jTZYlLnwsTT2PIOQQGNLWfjavGifnk1JD1LcZjZaBTRcxZu2FfPfNLOE04DSu9lqtQ==}
     peerDependencies:
       acorn: ^8.9.0
+
+  '@thisux/sveltednd@0.0.14':
+    resolution: {integrity: sha512-Vbq69SU3HUomPg6oCXtb89OG89hka0YIkdaErYibn3waK7tYE66IcQxD/Fzg8YNW3EVsXoA9kc7kW5EUBCSQGg==}
+
+  '@thisux/sveltednd@0.0.17':
+    resolution: {integrity: sha512-lRninjw439phhA8xAHqCpMAX0hnwFMdbXW4M0XJgAdnGxeum+QsLiIC4P3HnkNXAygsVKUqxRcbS84CxDZ9hPw==}
+    peerDependencies:
+      svelte: ^5.0.0
+
+  '@thisux/sveltednd@0.0.18':
+    resolution: {integrity: sha512-MO+iR9ZRHApvtwgWujmqwUbhv9mKs0jLOmeG4tn98GmU1/9wVOi02jrNqeggKg3c8dXz6pMmUHfOfmcq7WwYZg==}
+    peerDependencies:
+      svelte: ^5.0.0
+
+  '@thisux/sveltednd@0.0.20':
+    resolution: {integrity: sha512-VE0HopIlHIvNOfSZ1SsiIzl1AmTU0VSd2Nz2Q2nIdqIUsT/UP4hiLw2ed2jFqTKTbqC+kbCYL9vuBpkYnEw+Kw==}
+    peerDependencies:
+      svelte: ^5.0.0
 
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
@@ -2444,6 +2465,23 @@ snapshots:
   '@sveltejs/acorn-typescript@1.0.5(acorn@8.15.0)':
     dependencies:
       acorn: 8.15.0
+
+  '@thisux/sveltednd@0.0.14': {}
+
+  '@thisux/sveltednd@0.0.17(svelte@5.38.3)':
+    dependencies:
+      '@thisux/sveltednd': 0.0.14
+      svelte: 5.38.3
+
+  '@thisux/sveltednd@0.0.18(svelte@5.38.3)':
+    dependencies:
+      '@thisux/sveltednd': 0.0.17(svelte@5.38.3)
+      svelte: 5.38.3
+
+  '@thisux/sveltednd@0.0.20(svelte@5.38.3)':
+    dependencies:
+      '@thisux/sveltednd': 0.0.18(svelte@5.38.3)
+      svelte: 5.38.3
 
   '@types/estree@1.0.8': {}
 
