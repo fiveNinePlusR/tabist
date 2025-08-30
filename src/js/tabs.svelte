@@ -1,6 +1,5 @@
 <script>
   import Utils from './lib/utils.js';
-  import { dndzone } from "svelte-dnd-action";
 
   function log(...s) { if(developmentMode) { console.log(...s); } }
   function int(value) { return parseInt(value, 10) }
@@ -47,7 +46,6 @@
 
   function updateTabs() {
     getTabs().then((currentState) => {
-      log(currentState);
       windowTabs = currentState.windowTabs;
       tabcount = currentState.tabcount;
       windowcount = currentState.windowcount;
@@ -102,20 +100,6 @@
   browser.tabs.onMoved.addListener(updateTabs);
   browser.tabs.onRemoved.addListener(updateTabs);
   browser.tabs.onUpdated.addListener(updateTabs);
-
-
-  function handleDndConsider(e) {
-    const { items: newItems, info } = e.detail;
-    log("consider", newItems, info);
-    // windowTabs = newItems;
-  }
-
-  function handleDndFinalize(e) {
-    const { items: newItems, info } = e.detail;
-    log("finalize", newItems, info);
-    // windowTabs = newItems;
-  }
-
 
 
 
@@ -189,11 +173,9 @@
           <div>
             <h2>Window { i + 1 }</h2>
           </div>
-          <!-- <section aria-label="windows" use:dndzone="{{items: window}}" onconsider="{handleDndConsider}" onfinalize="{handleDndFinalize}" section="windows-section"> -->
              {#each window as link (link.id) }
                {@render renderlink(link) }
              {/each}
-          <!-- </section> -->
         {/each}
       </div>
 
