@@ -3,3 +3,5 @@ tabist/*.js
 *.map
 tabist/lib/js/react-debugging.js
 dist/
+node_modules
+.DS_Store
