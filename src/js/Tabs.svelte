@@ -1,5 +1,6 @@
 <script>
   import Utils from './lib/utils.js';
+  import { draggable, droppable } from '@thisux/sveltednd';
 
   function log(...s) { if(developmentMode) { console.log(...s); } }
   function int(value) { return parseInt(value, 10) }
@@ -103,6 +104,21 @@
 
 
 
+  // Handle drops between containers
+  function myhandleDrop(state) {
+    const { draggedItem, sourceContainer, targetContainer } = state;
+    log("dropped item", draggedItem );
+    log("source", sourceContainer)
+    log("target", targetContainer)
+    log("all state", state)
+    // if (!targetContainer || sourceContainer === targetContainer) return;
+
+
+    // // Update items based on the drop
+    // items = items.filter((item) => item !== draggedItem);
+    // items = [...items, draggedItem];
+  }
+
   updateTabs();
 
 </script>
@@ -170,12 +186,14 @@
 
         <!-- normal tabs -->
         {#each windowTabs as window, i}
-          <div>
+          <div use:droppable={{ container: 'list', callbacks: { onDrop: myhandleDrop } }}>
             <h2>Window { i + 1 }</h2>
-          </div>
              {#each window as link (link.id) }
-               {@render renderlink(link) }
+               <div use:draggable={{ container: 'list', dragData: {link, windowid: link.windowId, tabid: link.id} }}>
+                 {@render renderlink(link) }
+               </div>
              {/each}
+          </div>
         {/each}
       </div>
 
