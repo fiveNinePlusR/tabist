@@ -4,7 +4,7 @@ body {
     max-width: 50em;
     font-family: "Helvetica", "Arial", sans-serif;
     line-height: 1.5;
-    color: #555;
+    color: #efefefff;
 }
 
 ul{
@@ -12,7 +12,7 @@ ul{
 }
 
 h2 {
-  color: #333;
+  color: #cdcdcd;
 }
 
 #controls {
@@ -24,7 +24,7 @@ h2 {
 }
 
 .container div ul li a, .links {
-	color: #444 !important;
+	color: #cdcdcd !important;
 }
 
 .linkurl {
