@@ -25,6 +25,7 @@ function copyStatic() {
 
   copyRecursive("tabist", "dist");
   copyFileSync("src/js/lib/utils.js", "dist/lib/js/utils.js");
+  copyFileSync("src/js/background.js", "dist/lib/js/background.js");
 }
 
 async function build() {
@@ -33,7 +34,7 @@ async function build() {
   let context = await esbuild.context({
     entryPoints: {
       tabs: "src/js/tabs.js",
-      background: "src/js/background.js",
+      // background: "src/js/background.js",
       options: "src/js/options.js",
     },
     bundle: true,
@@ -68,4 +69,7 @@ async function build() {
     // },
 }
 
-build().then(() => console.log("Build complete."));
+build().then(() => {
+  console.log("Build complete.")
+  process.exit(0)
+});

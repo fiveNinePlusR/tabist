@@ -1,5 +1,8 @@
 #! /usr/bin/env sh
 
+echo "use npm to build the project"
+return
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 cd "$DIR"

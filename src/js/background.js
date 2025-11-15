@@ -1,4 +1,4 @@
-var extURL = chrome.extension.getURL("tabs.html");
+var extURL = chrome.runtime.getURL("tabs.html");
 
 function toggleTabist() {
   chrome.windows.getCurrent({}, function(window) {
@@ -30,7 +30,7 @@ function toggleTabist() {
   });
 }
 
-chrome.browserAction.onClicked.addListener(toggleTabist);
+chrome.action.onClicked.addListener(toggleTabist);
 
 // listen for the keyboard shortcut command
-chrome.commands.onCommand.addListener(toggleTabist);
+// chrome.commands.onCommand.addListener(toggleTabist);
