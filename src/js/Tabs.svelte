@@ -17,7 +17,7 @@
   let developmentStatus = $state("");
   let developmentMode = $state(false);
 
-  browser.management.getSelf(info => {
+  chrome.management.getSelf(info => {
       developmentStatus = info.installType == "normal" ? "" : info.installType;
       developmentMode = info.installType != "normal";
   });
@@ -27,7 +27,7 @@
 
     log("get tabs running");
 
-    return await browser.tabs.query({}).then((tabs) => {
+    return await chrome.tabs.query({}).then((tabs) => {
       let audibleTabs = tabs.filter(tab => tab.audible);
       // log(tabs);
 
@@ -47,6 +47,7 @@
 
   function updateTabs() {
     getTabs().then((currentState) => {
+      log("updating tabs", currentState);
       windowTabs = currentState.windowTabs;
       tabcount = currentState.tabcount;
       windowcount = currentState.windowcount;
@@ -69,7 +70,7 @@
 
     if( e.button == 1 ) {
       //middle click
-      browser.tabs.remove(tabid);
+      chrome.tabs.remove(tabid);
 
       return;
     } else if( e.button == 2 ) {
@@ -77,8 +78,8 @@
       return;
     }
 
-    let p1 = browser.tabs.update(tabid, { active: true });
-    let p2 = browser.windows.update(windowid, { focused: true });
+    let p1 = chrome.tabs.update(tabid, { active: true });
+    let p2 = chrome.windows.update(windowid, { focused: true });
 
 
     // TODO: close the tabist tab after clicking a link
@@ -94,13 +95,13 @@
     return false;
   }
 
-  browser.tabs.onActivated.addListener(updateTabs);
-  browser.tabs.onAttached.addListener(updateTabs);
-  browser.tabs.onCreated.addListener(updateTabs);
-  browser.tabs.onDetached.addListener(updateTabs);
-  browser.tabs.onMoved.addListener(updateTabs);
-  browser.tabs.onRemoved.addListener(updateTabs);
-  browser.tabs.onUpdated.addListener(updateTabs);
+  chrome.tabs.onActivated.addListener(updateTabs);
+  chrome.tabs.onAttached.addListener(updateTabs);
+  chrome.tabs.onCreated.addListener(updateTabs);
+  chrome.tabs.onDetached.addListener(updateTabs);
+  chrome.tabs.onMoved.addListener(updateTabs);
+  chrome.tabs.onRemoved.addListener(updateTabs);
+  chrome.tabs.onUpdated.addListener(updateTabs);
 
 
 
@@ -160,7 +161,7 @@
             <li>
               <a href={l.url} class="links" onclick={handleClicked} onauxclick={handleClicked} tabid={l.id} windowid={l.windowId}>
                 <span>
-                  <img src={l.favIconUrl} width="24" height="24" alt="" hidden={l.favIconUrl === undefined}/>
+                  <img src={l.favIconUrl} width="24" height="24" alt="" hidden={l.favIconUrl === undefined || l.favIconUrl == ""}/>
                   <span>&nbsp;</span>
                 </span>
                 {#if l.audible }<span>&#x1f508;</span>{/if}
@@ -186,14 +187,14 @@
 
         <!-- normal tabs -->
         {#each windowTabs as window, i}
-          <div use:droppable={{ container: 'list', callbacks: { onDrop: myhandleDrop } }}>
+          <!-- <div use:droppable={{ container: 'list', callbacks: { onDrop: myhandleDrop } }}> -->
             <h2>Window { i + 1 }</h2>
              {#each window as link (link.id) }
-               <div use:draggable={{ container: 'list', dragData: {link, windowid: link.windowId, tabid: link.id} }}>
+               <!-- <div use:draggable={{ container: 'list', dragData: {link, windowid: link.windowId, tabid: link.id} }}> -->
                  {@render renderlink(link) }
-               </div>
+               <!-- </div> -->
              {/each}
-          </div>
+          <!-- </div> -->
         {/each}
       </div>
 
