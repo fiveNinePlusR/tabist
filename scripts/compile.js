@@ -1,6 +1,6 @@
 import * as esbuild from "esbuild";
 import sveltePlugin from "esbuild-svelte";
-import sveltePreprocess from "svelte-preprocess";
+import { sveltePreprocess } from "svelte-preprocess";
 import { copyFileSync, rmSync, mkdirSync, readdirSync, statSync } from "node:fs";
 import * as path from "node:path";
 
@@ -39,6 +39,7 @@ async function build() {
     },
     bundle: true,
     platform: "browser",
+    conditions: ["browser", "svelte"],
     outdir: "dist",
     format: "iife",
     plugins: [
