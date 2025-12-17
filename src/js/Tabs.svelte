@@ -1,6 +1,8 @@
 <script>
   import Utils from './lib/utils.js';
   import { draggable, droppable } from '@thisux/sveltednd';
+  // import dnd  from 'dnd-master'
+  import * as dnd from 'dnd-master';
 
   function log(...s) { if(developmentMode) { console.log(...s); } }
   function int(value) { return parseInt(value, 10) }
@@ -16,6 +18,7 @@
   let updatecount = $state(0);
   let developmentStatus = $state("");
   let developmentMode = $state(false);
+  let dropInfo = $state({});
 
   chrome.management.getSelf(info => {
       developmentStatus = info.installType == "normal" ? "" : info.installType;
@@ -106,21 +109,35 @@
 
 
   // Handle drops between containers
-  function myhandleDrop(state) {
-    const { draggedItem, sourceContainer, targetContainer } = state;
-    log("dropped item", draggedItem );
-    log("source", sourceContainer)
-    log("target", targetContainer)
-    log("all state", state)
-    // if (!targetContainer || sourceContainer === targetContainer) return;
-
-
-    // // Update items based on the drop
-    // items = items.filter((item) => item !== draggedItem);
-    // items = [...items, draggedItem];
+  function myhandleDrop(data) {
+    // log("state", event, element)
+    dropInfo = {
+      droppedTab: data
+    };
   }
 
   updateTabs();
+
+  // parseInt(result.destination.index, 10);
+  function createDropzone(node) {
+    return dnd.dropzone(myhandleDrop, {
+      drop: (event, droptargetElement) => {
+        log("dropped data", event, droptargetElement);
+        // let fromtabid = int(event.dataTransfer.getData("tabid"));
+        let targetWindowid = int(droptargetElement.getAttribute("windowid"));
+        let targetIndex = int(droptargetElement.getAttribute("index"));
+
+        if(dropInfo.droppedTab != undefined) {
+          let tabData = dropInfo.droppedTab;
+          log("moving tab", tabData.tabid, "to window", targetWindowid, "at index", targetIndex);
+          chrome.tabs.move(tabData.tabid, { windowId: targetWindowid, index: targetIndex });
+        }
+    }})
+  }
+
+  function createDragable(node) {
+    return dnd.draggable({"draggable": "true", "windowid" : node.windowId, "tabid" : node.id });
+  }
 
 </script>
 
@@ -157,20 +174,25 @@
 
       <div id="content">
 
+      <!-- issue is the callback doesn't include the target element but there is a target element in the event data
+          could use that in a state rune to identify the target container or perhaps
+      -->
+
       {#snippet renderlink(l)}
             <li>
-              <a href={l.url} class="links" onclick={handleClicked} onauxclick={handleClicked} tabid={l.id} windowid={l.windowId}>
-                <span>
-                  <img src={l.favIconUrl} width="24" height="24" alt="" hidden={l.favIconUrl === undefined || l.favIconUrl == ""}/>
-                  <span>&nbsp;</span>
-                </span>
-                {#if l.audible }<span>&#x1f508;</span>{/if}
-                {l.title} ({l.id})
-              </a>
-              {#if l.active }
-                <span style="color: darkred"> &raquo; (Selected)</span>
-              {/if}
-              <span style="color: darkred">(X)</span>
+              <div {@attach createDropzone(l)} tabid={l.id} windowid={l.windowId} index={l.index}>tab: {l.id}, index: {l.index}</div>
+                <a href={l.url} class="links" {@attach createDragable(l)} onclick={handleClicked} onauxclick={handleClicked} tabid={l.id} windowid={l.windowId}>
+                  <span>
+                    <img src={l.favIconUrl} width="24" height="24" alt="" hidden={l.favIconUrl === undefined || l.favIconUrl == ""}/>
+                    <span>&nbsp;</span>
+                  </span>
+                  {#if l.audible }<span>&#x1f508;</span>{/if}
+                  {l.title} ({l.id})
+                </a>
+                {#if l.active }
+                  <span style="color: darkred"> &raquo; (Selected)</span>
+                {/if}
+                <span style="color: darkred">(X)</span>
             </li>
       {/snippet}
 
