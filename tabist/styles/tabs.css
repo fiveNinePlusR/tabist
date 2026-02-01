@@ -42,3 +42,25 @@ h2 {
   margin-bottom: 1em;
 }
 
+.dropzone {
+  display: none;
+}
+
+.active-dropzone {
+  background: linear-gradient(180deg, #e8fbe6 0%, #d0f5d3 100%);
+  border: 2px solid #2e8b57; /* darker green border */
+  box-shadow: 0 2px 6px rgba(46,139,87,0.12), inset 0 1px 0 rgba(255,255,255,0.4);
+  border-radius: 6px;
+  padding: 6px;
+  display: block !important;    /* ensure it's visible if previously hidden */
+  visibility: visible !important;
+  opacity: 1;
+  transition: box-shadow 120ms ease, transform 120ms ease;
+}
+
+/* Optional subtle lift while active */
+.active-dropzone.dragging {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(46,139,87,0.16);
+}
+
