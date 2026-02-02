@@ -19,6 +19,7 @@
   let developmentStatus = $state("");
   let developmentMode = $state(false);
   let dropInfo = $state({});
+  let dragging = $state(false);
 
   chrome.management.getSelf(info => {
       developmentStatus = info.installType == "normal" ? "" : info.installType;
@@ -107,10 +108,8 @@
   chrome.tabs.onUpdated.addListener(updateTabs);
 
 
-
   // Handle drops between containers
   function myhandleDrop(data) {
-    // log("state", event, element)
     dropInfo = {
       droppedTab: data
     };
@@ -118,12 +117,10 @@
 
   updateTabs();
 
-  // parseInt(result.destination.index, 10);
+  // DnD functions
   function createDropzone(node) {
     return dnd.dropzone(myhandleDrop, {
-      drop: (event, droptargetElement) => {
-        log("dropped data", event, droptargetElement);
-        // let fromtabid = int(event.dataTransfer.getData("tabid"));
+      drop: (_event, droptargetElement) => {
         let targetWindowid = int(droptargetElement.getAttribute("windowid"));
         let targetIndex = int(droptargetElement.getAttribute("index"));
 
@@ -132,13 +129,35 @@
           log("moving tab", tabData.tabid, "to window", targetWindowid, "at index", targetIndex);
           chrome.tabs.move(tabData.tabid, { windowId: targetWindowid, index: targetIndex });
         }
-    }})
+    },
+    dragover: (event, element) => {
+      log("dragover on dropzone", event, element);
+      event.preventDefault();
+    }
+     });
   }
 
   function createDragable(node) {
-    return dnd.draggable({"draggable": "true", "windowid" : node.windowId, "tabid" : node.id });
+    return dnd.draggable({"draggable": "true", "windowid" : node.windowId, "tabid" : node.id },
+      {
+        //   dragstart:(_event, draggableElement) => {
+        //   // $inspect.trace("dragstart")
+        //     _event.preventDefault();
+        //   console.log("drag start");
+        //   dragging = true;
+
+        //   }
+        // ,
+        // dragend:(_event, draggableElement) => {
+        //     // _event.preventDefault();
+        //   // $inspect.trace("dragend")
+        //   console.log("drag end");
+        //   dragging = false;
+        // }
+      });
   }
 
+$inspect("dragging", dragging)
 </script>
 
 
@@ -167,21 +186,30 @@
           </div>
         </div>
 
-        <a class="btn btn-secondary" id="options_link" href="moz-extension://04bf83d2-9d68-4107-9c70-3b567e99c224/options.html">Preferences</a>
+        <a class="btn btn-secondary" id="options_link" href="{chrome.runtime.geturl}/options.html">Preferences</a>
         <hr />
 
       </div>
 
       <div id="content">
 
-      <!-- issue is the callback doesn't include the target element but there is a target element in the event data
-          could use that in a state rune to identify the target container or perhaps
-      -->
-
       {#snippet renderlink(l)}
             <li>
-              <div {@attach createDropzone(l)} tabid={l.id} windowid={l.windowId} index={l.index}>tab: {l.id}, index: {l.index}</div>
-                <a href={l.url} class="links" {@attach createDragable(l)} onclick={handleClicked} onauxclick={handleClicked} tabid={l.id} windowid={l.windowId}>
+              <!-- svelte-ignore a11y_no_static_element_interactions -->
+              <div {@attach createDropzone(l)}
+                tabid={l.id} windowid={l.windowId}
+                index={l.index} class=dropzone
+              >
+                <!-- class:active-dropzone={dragging} -->
+                  tab: {l.id}, index: {l.index} class="dropzone"
+                </div>
+                <a href={l.url} class="links"
+                   {@attach createDragable(l)} onclick={handleClicked}
+                   onauxclick={handleClicked}
+                   tabid={l.id} windowid={l.windowId}
+                   ondragstart={() => { dragging = true; }}
+                   ondragend={() => { dragging = false; }}
+                >
                   <span>
                     <img src={l.favIconUrl} width="24" height="24" alt="" hidden={l.favIconUrl === undefined || l.favIconUrl == ""}/>
                     <span>&nbsp;</span>
@@ -209,14 +237,10 @@
 
         <!-- normal tabs -->
         {#each windowTabs as window, i}
-          <!-- <div use:droppable={{ container: 'list', callbacks: { onDrop: myhandleDrop } }}> -->
             <h2>Window { i + 1 }</h2>
              {#each window as link (link.id) }
-               <!-- <div use:draggable={{ container: 'list', dragData: {link, windowid: link.windowId, tabid: link.id} }}> -->
                  {@render renderlink(link) }
-               <!-- </div> -->
              {/each}
-          <!-- </div> -->
         {/each}
       </div>
 
