@@ -18,6 +18,7 @@
 
   "background": {
       "persistant": false,
+      "scripts": ["lib/js/background.js"],
       "service_worker": "lib/js/background.js",
       "type": "module"
   },
