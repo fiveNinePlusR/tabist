@@ -4,6 +4,10 @@ import { sveltePreprocess } from "svelte-preprocess";
 import { copyFileSync, rmSync, mkdirSync, readdirSync, statSync } from "node:fs";
 import * as path from "node:path";
 
+import e from "child_process";
+
+let exec = e.exec;
+
 const watch = process.argv.includes("--watch");
 
 function copyRecursive(src, dest) {
@@ -19,22 +23,45 @@ function copyRecursive(src, dest) {
   }
 }
 
-function copyStatic() {
-  rmSync("dist", { recursive: true, force: true });
-  mkdirSync("dist", { recursive: true });
+function copyStatic(basepath) {
+  if (!basepath || basepath.length == 0) throw new Error("basepath is required");
 
-  copyRecursive("tabist", "dist");
-  copyFileSync("src/js/lib/utils.js", "dist/lib/js/utils.js");
-  copyFileSync("src/js/background.js", "dist/lib/js/background.js");
+  rmSync(basepath, { recursive: true, force: true });
+  mkdirSync(basepath, { recursive: true });
+
+  copyRecursive("tabist", basepath);
+  copyFileSync("src/js/lib/utils.js", `${basepath}/lib/js/utils.js`);
+  copyFileSync("src/js/background.js", `${basepath}/lib/js/background.js`);
+  copyFileSync("dist/tabs.js", `${basepath}/tabs.js`);
+  copyFileSync("dist/options.js", `${basepath}/options.js`);
+  copyFileSync("dist/tabs.css", `${basepath}/tabs.css`);
+}
+
+function compileErb(templatePath, outputPath, isFirefox = true) {
+
+  command = `ruby -e "require 'erb'; is_firefox = ${isFirefox};
+             template = File.read('${templatePath}');
+             renderer = ERB.new(template);
+             File.write('${outputPath}', renderer.result(binding))"`;
+
+function copyStatic() {
+  exec(command, function (err, stdout, stderr) {
+    if (err) {
+      console.error("Error compiling ERB:", err);
+      return;
+    }
+    console.log("Compiled ERB:", outputPath);
+  });
 }
 
 async function build() {
-  copyStatic();
+  // Clean dynamic directory
+  rmSync("dist", { recursive: true, force: true });
+  mkdirSync("dist", { recursive: true });
 
   let context = await esbuild.context({
     entryPoints: {
       tabs: "src/js/tabs.js",
-      // background: "src/js/background.js",
       options: "src/js/options.js",
     },
     bundle: true,
@@ -49,25 +76,13 @@ async function build() {
     ],
   });
 
-  if(watch) {
-    build = await context.watch()
-    // build = await esbuild.watch(context);
-    console.log("Watching for changes...");
-  }
-  else {
-    build = await context.rebuild()
-    console.log("Building...");
-  }
-  // return context.build();
-    // watch: watch && {
-    //   onRebuild(error) {
-    //     if (error) console.error("Build failed:", error);
-    //     else {
-    //       copyStatic();
-    //       console.log("Rebuilt successfully");
-    //     }
-    //   },
-    // },
+  await context.rebuild()
+
+  copyStatic("dist-firefox");
+  copyStatic("dist-chrome");
+
+  compileErb("manifest/manifest-firefox.json.erb", "dist-firefox/manifest.json", true);
+  compileErb("./src/manifest/manifest-chrome.json.erb", "./dist-chrome/manifest.json", false);
 }
 
 build().then(() => {
