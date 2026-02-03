@@ -43,6 +43,7 @@ function compileErb(templatePath, outputPath, isFirefox = true) {
              template = File.read('${templatePath}');
              renderer = ERB.new(template);
              File.write('${outputPath}', renderer.result(binding))"`;
+}
 
 function copyStatic() {
   exec(command, function (err, stdout, stderr) {
