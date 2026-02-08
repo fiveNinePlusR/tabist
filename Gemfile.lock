@@ -1,0 +1,17 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    rubyshell (1.5.0)
+
+PLATFORMS
+  ruby
+  x86_64-linux
+
+DEPENDENCIES
+  rubyshell (~> 1.5)
+
+CHECKSUMS
+  rubyshell (1.5.0) sha256=ffd528415962e52b2f3ec155fc3bc2cac401981413c0db451ea2a20194916ab6
+
+BUNDLED WITH
+  4.0.3
