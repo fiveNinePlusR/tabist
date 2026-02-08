@@ -16,7 +16,7 @@ def clean_and_make_dirs
 end
 
 def compile_js
-  npm("run", "dev:compile")
+  pnpm("node", "./scripts/compile.js")
 end
 
 def compile_erb
