@@ -18,7 +18,7 @@
 
   "background": {
       "persistant": false,
-    <% if is_firefox? %>
+    <% if is_firefox %>
       "scripts": ["lib/js/background.js"],
     <% else %>
       "service_worker": "lib/js/background.js",
