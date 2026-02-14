@@ -12,8 +12,10 @@
     "permissions": [
       "tabs",
       "storage",
-      "downloads",
-      "sidePanel"
+      "downloads"
+      <% if !is_firefox %>
+      ,"sidePanel"
+      <% end %>
     ],
 
   "background": {
@@ -30,12 +32,21 @@
       "default_icon": "icons/page-32_white.png"
   },
 
+  <% if is_firefox %>
+  "sidebar_action": {
+    "default_icon": "icons/page-32_white.png",
+    "default_title" : "Tabist",
+    "default_panel": "tabs.html",
+    "open_at_install": false
+  },
+  <% else %>
   "side_panel": {
     "default_icon": "icons/page-32_white.png",
     "default_title" : "Tabist",
     "default_path": "tabs.html",
     "open_at_install": false
   },
+  <% end %>
 
   "commands": {
       "toggle-tabist": {
