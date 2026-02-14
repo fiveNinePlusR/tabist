@@ -263,9 +263,11 @@ $inspect("dragging", dragging)
         <!-- normal tabs -->
         {#each windowTabs as window, i}
             <h2>Window { i + 1 }</h2>
+              <ul>
              {#each window as link (link.id) }
                  {@render renderlink(link) }
              {/each}
+            </ul>
         {/each}
       </div>
 

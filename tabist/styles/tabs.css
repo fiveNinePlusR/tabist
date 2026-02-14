@@ -10,6 +10,7 @@ body {
 
 ul{
   line-height: 1.5;
+  paddintg-left: 1.5em;
 }
 
 h2 {
@@ -22,6 +23,10 @@ h2 {
 
 .controls-selections {
   /* margin-bottom: 1.5em; */
+}
+
+#content > ul > li {
+  padding-bottom: 5px;
 }
 
 .container div ul li a, .links {
