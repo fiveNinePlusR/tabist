@@ -74,6 +74,14 @@
     showOptions = !showOptions;
   }
 
+  function closeTab(e) {
+    let tabid = int(e.target.getAttribute('tabid'));
+    let windowid = int(e.target.getAttribute('windowid'));
+
+    e.preventDefault();
+
+    chrome.tabs.remove(tabid);
+  }
 
   function handleClicked(e) {
     log("link clicked", e);
@@ -234,7 +242,10 @@ $inspect("dragging", dragging)
                 {#if l.active }
                   <span style="color: darkred"> &raquo; (Selected)</span>
                 {/if}
-                <span style="color: darkred">(X)</span>
+                <a href="close"
+                  onclick={closeTab}
+                  tabid={l.id} windowid={l.windowId}
+                style="color: darkred !important">(X)</a>
             </li>
       {/snippet}
 
