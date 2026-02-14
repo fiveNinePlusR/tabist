@@ -20,6 +20,8 @@
   let developmentMode = $state(false);
   let dropInfo = $state({});
   let dragging = $state(false);
+  let showOptions = $state(false);
+
 
   chrome.management.getSelf(info => {
       developmentStatus = info.installType == "normal" ? "" : info.installType;
@@ -41,12 +43,16 @@
       let groups = Utils.groupTabs(tabs, "window");
       let windowTabs = Utils.sortByDomain(sortByDomainValue, groups);
       let tabcount = tabs.length;
-      let windowcount = windowTabs.size;
+      let windowcount = windowTabs.length;
 
       let end = Date.now();
 
       return { windowTabs, tabcount, windowcount, start, end, tabs, audibleTabs };
     });
+  }
+
+  function getOptionsURL() {
+    return chrome.runtime.getURL("options.html")
   }
 
   function updateTabs() {
@@ -62,6 +68,12 @@
       updatecount += 1
     });
   }
+
+  function toggleOptions(event) {
+    if (event) event.preventDefault();
+    showOptions = !showOptions;
+  }
+
 
   function handleClicked(e) {
     log("link clicked", e);
@@ -164,12 +176,13 @@ $inspect("dragging", dragging)
     <div class="container">
       <h1>Tabist</h1>
       <button type="button" class="btn btn-secondary" id="refresh_link" onclick={updateTabs}>Refresh</button>
-      <a class="btn btn-secondary" id="display_options_link">Show Options</a>
+      <button type="button" class="btn btn-secondary" id="display_options_link" onclick={toggleOptions} aria-expanded={showOptions}>{showOptions ? 'Hide Options' : 'Show Options'}</button>
 
       <hr />
       <h3 id="refreshcount">Refresh Count: {updatecount}</h3>
       <hr />
-      <div id="controls" class="container" hidden="">
+      {#if showOptions}
+      <div id="controls" class="container">
         <div class="row">
 
           <div class="col-sm-5">
@@ -186,10 +199,11 @@ $inspect("dragging", dragging)
           </div>
         </div>
 
-        <a class="btn btn-secondary" id="options_link" href="{chrome.runtime.geturl}/options.html">Preferences</a>
+        <a class="btn btn-secondary" id="options_link" href={getOptionsURL()}>Preferences</a>
         <hr />
 
       </div>
+      {/if}
 
       <div id="content">
 
@@ -203,13 +217,13 @@ $inspect("dragging", dragging)
                 <!-- class:active-dropzone={dragging} -->
                   tab: {l.id}, index: {l.index} class="dropzone"
                 </div>
-                <a href={l.url} class="links"
+                 <a href={l.url} class="links"
                    {@attach createDragable(l)} onclick={handleClicked}
                    onauxclick={handleClicked}
                    tabid={l.id} windowid={l.windowId}
                    ondragstart={() => { dragging = true; }}
                    ondragend={() => { dragging = false; }}
-                >
+                 >
                   <span>
                     <img src={l.favIconUrl} width="24" height="24" alt="" hidden={l.favIconUrl === undefined || l.favIconUrl == ""}/>
                     <span>&nbsp;</span>
