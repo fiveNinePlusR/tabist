@@ -11,22 +11,24 @@ function saveOptions() {
   });
 }
 
-function restoreOptions() {
-  chrome.storage.local.get(["closeTab", "pinTab", "autoRefresh", "newtab", "showDomain"], res => {
-    let closetab = res.closeTab;
-    let pintab = res.pinTab;
-    let autorefresh = res.autoRefresh;
-    let newtab = res.newTab;
-    let showdomain = res.showDomain;
-    document.querySelector("#close_tab").checked = closetab || false;
-    // document.querySelector("#pin_tab").checked = pintab || false;
-    document.querySelector("#autorefresh_tab").checked = autorefresh || false;
-    // document.querySelector("#newtab_tab").checked = newtab || false;
-    document.querySelector("#show_domain_tab").checked = showdomain || false;
-  });
-}
+function getOptions() {
+  let closetab, pintab, autorefresh, newtab, showdomain;
 
-// Bacon.fromEvent();
+  chrome.storage.local.get(["closeTab", "pinTab", "autoRefresh", "newtab", "showDomain"], res => {
+    closetab = res.closeTab;
+    pintab = res.pinTab;
+    autorefresh = res.autoRefresh;
+    newtab = res.newTab;
+    showdomain = res.showDomain;
+    // document.querySelector("#close_tab").checked = closetab || false;
+    // // document.querySelector("#pin_tab").checked = pintab || false;
+    // document.querySelector("#autorefresh_tab").checked = autorefresh || false;
+    // // document.querySelector("#newtab_tab").checked = newtab || false;
+    // document.querySelector("#show_domain_tab").checked = showdomain || false;
+  });
+
+  return { closetab, pintab, autorefresh, newtab, showdomain };
+}
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
 document.querySelector("form").addEventListener("submit", saveOptions);

@@ -22,6 +22,9 @@
   let dragging = $state(false);
   let showOptions = $state(false);
 
+  let options = $state({});
+  $inspect("options", options)
+  options = getOptions();
 
   chrome.management.getSelf(info => {
       developmentStatus = info.installType == "normal" ? "" : info.installType;
