@@ -34,6 +34,8 @@ def do_copy
   ["./dist-firefox", "./dist-chrome"].each do |basepath|
     cp("-r", "tabist/*", "#{basepath}/");
 
+    cp("node_modules/webextension-polyfill/dist/browser-polyfill.js", "#{basepath}/lib/js/browser-polyfill.js")
+
     cp("src/js/lib/utils.js", "#{basepath}/lib/js/utils.js");
     cp("src/js/background.js", "#{basepath}/lib/js/background.js");
     cp("dist/tabs.js", "#{basepath}/tabs.js");
