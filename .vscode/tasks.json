@@ -2,15 +2,16 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "npm",
-			"script": "dev:compile",
+			"type": "shell",
+			"command": "ruby",
+			"args": ["scripts/compile.rb"],
 			"group": {
 				"kind": "build",
 				"isDefault": true
 			},
 			"problemMatcher": [],
-			"label": "npm: dev:compile",
-			"detail": "pnpm node scripts/compile.js"
-		}
+			"label": "compile script",
+			"detail": "ruby scripts/compile.rb"
+		},
 	]
 }

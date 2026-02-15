@@ -24,6 +24,7 @@ def compile_erb
   renderer = ERB.new(template)
 
   is_firefox = true
+  puts "" if is_firefox
   File.write('./dist-firefox/manifest.json', renderer.result(binding))
 
   is_firefox = false
