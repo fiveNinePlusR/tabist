@@ -1,0 +1,3 @@
+#! /usr/bin/env fish
+
+npm exec web-ext -- run --reload --source-dir dist-firefox --p tabist-profile --firefox ~/localbin/firefox/firefox
