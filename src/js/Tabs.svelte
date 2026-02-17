@@ -4,6 +4,7 @@
   // import dnd  from 'dnd-master'
   import * as dnd from 'dnd-master';
   import Favicon from './components/Favicon.svelte';
+  import { setFavForTab, getFavForTab, reconcileTabs, debugStats } from './lib/favmap.js';
 
   function log(...s) { if(developmentMode) { console.log(...s); } }
   function int(value) { return parseInt(value, 10) }
@@ -37,21 +38,36 @@
 
     log("get tabs running");
 
-    return await chrome.tabs.query({}).then((tabs) => {
-      let audibleTabs = tabs.filter(tab => tab.audible);
-      // log(tabs);
+    return await chrome.tabs.query({}).then((rawTabs) => {
+      // Deduplicate and pool favIconUrl values to avoid lots of repeated data: strings
+      const lightweightTabs = rawTabs.map(t => {
+        if (t.favIconUrl) setFavForTab(t.id, t.favIconUrl);
+        // return a small object used for display, without copying favIconUrl
+        return {
+          id: t.id,
+          windowId: t.windowId,
+          index: t.index,
+          url: t.url,
+          title: t.title,
+          audible: t.audible,
+          active: t.active
+        };
+      });
 
-      // //loop through the tabs and group them by windows for display
-      // let sortType = groupbyDomainElement.checked ? "domain": "window";
-      // let groups = Utils.groupTabs(tabs, sortType);
-      let groups = Utils.groupTabs(tabs, "window");
+      // Reconcile pooled favicons with current tabs (remove stale mappings)
+      reconcileTabs(rawTabs.map(t => t.id));
+
+      let audibleTabs = lightweightTabs.filter(tab => tab.audible);
+
+      // Group the lightweight tabs by window
+      let groups = Utils.groupTabs(lightweightTabs, "window");
       let windowTabs = Utils.sortByDomain(sortByDomainValue, groups);
-      let tabcount = tabs.length;
+      let tabcount = lightweightTabs.length;
       let windowcount = windowTabs.length;
 
       let end = Date.now();
 
-      return { windowTabs, tabcount, windowcount, start, end, tabs, audibleTabs };
+      return { windowTabs, tabcount, windowcount, start, end, tabs: lightweightTabs, audibleTabs };
     });
   }
 
@@ -237,7 +253,7 @@ $inspect("dragging", dragging)
                    ondragend={() => { dragging = false; }}
                  >
                   <span>
-                    <Favicon src={l.favIconUrl} />
+                    <Favicon src={getFavForTab(l.id)} />
                     <span>&nbsp;</span>
                   </span>
                   {#if l.audible }<span>&#x1f508;</span>{/if}
