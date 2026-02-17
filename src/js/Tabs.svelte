@@ -3,6 +3,7 @@
   import { draggable, droppable } from '@thisux/sveltednd';
   // import dnd  from 'dnd-master'
   import * as dnd from 'dnd-master';
+  import Favicon from './components/Favicon.svelte';
 
   function log(...s) { if(developmentMode) { console.log(...s); } }
   function int(value) { return parseInt(value, 10) }
@@ -24,7 +25,7 @@
 
   let options = $state({});
   $inspect("options", options)
-  options = getOptions();
+  options = Utils.getOptions();
 
   chrome.management.getSelf(info => {
       developmentStatus = info.installType == "normal" ? "" : info.installType;
@@ -236,7 +237,7 @@ $inspect("dragging", dragging)
                    ondragend={() => { dragging = false; }}
                  >
                   <span>
-                    <img src={l.favIconUrl} width="24" height="24" alt="" hidden={l.favIconUrl === undefined || l.favIconUrl == ""}/>
+                    <Favicon src={l.favIconUrl} />
                     <span>&nbsp;</span>
                   </span>
                   {#if l.audible }<span>&#x1f508;</span>{/if}
